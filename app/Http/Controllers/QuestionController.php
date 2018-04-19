@@ -42,4 +42,8 @@ class QuestionController extends Controller
     public function update($question_id) {
 
     }
+
+    public function show($question_id) {
+        dd($question_id);
+    }
 }
