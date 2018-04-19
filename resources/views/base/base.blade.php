@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="{{ URL::asset('css/cosmo.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('css/simple-sidebar.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('css/css.css') }}" rel="stylesheet">
     @yield('css')
     <title>@yield('title')</title>
 </head>

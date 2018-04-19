@@ -24,4 +24,10 @@ Route::get('/logout', 'AuthController@logout')->name('logout');
 Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/me', 'UserController@profile')->name('userProfile');
     Route::get('/admin', 'AdminController@adminFront')->name('adminFront');
+
+    Route::get('/question/add', 'QuestionController@create')->name('questionCreate');
+    Route::post('/question/add', 'QuestionController@add')->name('questionAdd');
+
+    Route::get('/questions', 'QuestionController@all')->name('questionsAll');
+
 });

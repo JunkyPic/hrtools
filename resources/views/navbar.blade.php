@@ -9,8 +9,16 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand">
+                <a href="{{ route('questionsAll') }}">
+                    Questions
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('questionCreate') }}">Add</a>
+            </li>
+            <li class="sidebar-brand">
                 <a href="#">
-                    Start Bootstrap
+                    Other stuff
                 </a>
             </li>
             <li>
