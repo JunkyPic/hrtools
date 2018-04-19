@@ -21,7 +21,7 @@
                 <div class="spacing-top ">
                     <div class="row question-border ">
                         <div class="col-lg-12">
-                            <h3><a href="#">{{ $question->title }}</a></h3>
+                            <h3><a href="{{ route('questionShow', ['id' => $question->id]) }}">{{ $question->title }}</a></h3>
                         </div>
                         @if($question->images()->count() == 1)
                             @foreach($question->images as $image)
@@ -54,7 +54,7 @@
                     </div>
                 </div>
             @endforeach
-            <div class="row">
+            <div class="row spacing-top">
                 <div class="col-lg-12 pagination pagination-centered justify-content-center">
                     {{ $questions->links() }}
                 </div>

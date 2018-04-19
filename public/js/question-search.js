@@ -5,22 +5,9 @@ $(document).ready(function() {
             url: $('#api-route').val(),
             timeout: 500,
             displayField: "title",
-            triggerLength: 1,
+            triggerLength: 2,
             method: "get",
-            loadingClass: "loading-circle",
-            preDispatch: function (query) {
-                return {
-                    search: query
-                }
-            },
-            preProcess: function (data) {
-                if (data.success === false) {
-                    // Hide the list, there was some error
-                    return false;
-                }
-                // We good!
-                return data;
-            }
+            loadingClass: "loading-circle"
         },
         onSelect: function(item) {
             window.location = 'question/' + item.value;
