@@ -1,9 +1,8 @@
 @if(Auth::check())
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a href="#menu-toggle" class="navbar-brand" id="menu-toggle">{{ __('Toggle Menu') }}</a>
-        <a href="{{ route('logout') }}" class="navbar-brand">{{ __('Logout') }}</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a href="#menu-toggle" class="navbar-brand" id="menu-toggle">{{ __('Toggle Menu') }}</a>
+    <a href="{{ route('logout') }}" class="navbar-brand">{{ __('Logout') }}</a>
 </nav>
-@endif
 
 <div id="wrapper">
     <!-- Sidebar -->
@@ -15,8 +14,12 @@
                 </a>
             </li>
             <li>
-                <a href="#">Contact</a>
+                <a href="{{ route('adminFront') }}">Admin</a>
+            </li>
+            <li>
+                <a href="{{ route('userProfile') }}">My profile</a>
             </li>
         </ul>
     </div>
 </div>
+@endif

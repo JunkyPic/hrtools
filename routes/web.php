@@ -23,4 +23,5 @@ Route::get('/logout', 'AuthController@logout')->name('logout');
 
 Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/me', 'UserController@profile')->name('userProfile');
+    Route::get('/admin', 'AdminController@adminFront')->name('adminFront');
 });

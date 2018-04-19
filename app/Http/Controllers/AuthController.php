@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AuthControllerPostlogin;
+use App\Http\Requests\AuthControllerPostLogin;
 use App\Http\Requests\AuthControllerPostRegister;
 use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 
+/**
+ * Class AuthController
+ *
+ * @package App\Http\Controllers
+ */
 class AuthController extends Controller
 {
     use AuthenticatesUsers;
-
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = 'userProfile';
 
     /**
      * RegisterController constructor.
@@ -27,19 +25,25 @@ class AuthController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getLogin() {
         return view('auth.login');
     }
 
-    public function postLogin(AuthControllerPostlogin $request) {
-        if (\Auth::attempt([
-            'email' => $request->get('email'),
-            'password' => $request->get('password')]))
+    /**
+     * @param AuthControllerPostLogin $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postLogin(AuthControllerPostLogin $request) {
+        if (\Auth::attempt($request->except('_token')))
         {
-            return redirect()->route('userProfile');
+            return redirect()->route('adminFront');
         }
 
-        return redirect()->back();
+        return redirect()->back()->withErrors(['message' => 'Something went wrong, try again.']);
     }
 
     /**
@@ -62,7 +66,7 @@ class AuthController extends Controller
         ]);
         if (\Auth::attempt([
             'email' => $request->get('email'), 'password' => $request->get('password')])) {
-            return redirect()->route('userProfile');
+            return redirect()->route('adminFront');
         }
 
         return abort(520); // @TODO Rewrite this to something less 520ish
