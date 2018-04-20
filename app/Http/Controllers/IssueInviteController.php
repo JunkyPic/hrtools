@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IssueInvitePostRequest;
-use App\Mail\IssueInvite;
 use App\Models\Invite;
 use App\User;
 use Illuminate\Http\Request;

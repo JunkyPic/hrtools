@@ -31,7 +31,9 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/question/add', 'QuestionController@create')->name('questionCreate');
     Route::post('/question/add', 'QuestionController@add')->name('questionAdd');
 
-    Route::get('/question/{id}', 'QuestionController@show')->name('questionShow');
+    Route::get('/question/{id}', 'QuestionController@edit')->name('questionEdit');
+    Route::post('/question/{id}/update', 'QuestionController@update')->name('questionUpdate');
+    Route::post('/question/update/image', 'QuestionController@updateImages')->name('questionUpdateImages');
 
     Route::get('/questions', 'QuestionController@all')->name('questionsAll');
 

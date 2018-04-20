@@ -3,10 +3,16 @@
 namespace App\Repository;
 
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use App\Models\Image as ImageModel;
 
+/**
+ * Class ImageRepository
+ *
+ * @package App\Repository
+ */
 class ImageRepository
 {
 
@@ -53,7 +59,7 @@ class ImageRepository
             $img = Image::make($image->getRealPath());
             $images_return[] = $this->mode_instance::create(
                 [
-                    'name' => null,
+                    'name'  => null,
                     'alias' => $imageName,
                 ]
             );
@@ -63,5 +69,21 @@ class ImageRepository
         }
 
         return $images_return;
+    }
+
+    /**
+     * @param $images
+     */
+    public function remove($images)
+    {
+        if(!$images instanceof Collection) {
+            return;
+        }
+
+        foreach ($images as $image) {
+            if (\File::exists(\Config::get('image.upload_path') . $image->alias)) {
+                \File::delete(\Config::get('image.upload_path') . $image->alias);
+            }
+        }
     }
 }

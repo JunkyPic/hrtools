@@ -21,7 +21,7 @@
                 <div class="spacing-top ">
                     <div class="row question-border ">
                         <div class="col-lg-12">
-                            <h3><a href="{{ route('questionShow', ['id' => $question->id]) }}">{{ $question->title }}</a></h3>
+                            <h3><a href="{{ route('questionEdit', ['id' => $question->id]) }}">{{ $question->title }}</a></h3>
                         </div>
                         @if($question->images()->count() == 1)
                             @foreach($question->images as $image)
@@ -47,7 +47,7 @@
                             </div>
                             @foreach($question->images as $image)
                                 <div class="col-lg-6">
-                                    <img class="img-fluid fit-image" src="{{ asset('img') . '/' . $image->alias}}">
+                                    <img class="img-fluid fit-image" src="{{ url(Config::get('image.display_path') . $image->alias) }}">
                                 </div>
                             @endforeach
                         @endif

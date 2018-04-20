@@ -2,10 +2,22 @@
     padding-top: 20px;
 }
 
+.spacing-top-10{
+    padding-top: 10px;
+}
+
 .fit-image {
     width: 100%;
 }
 
 .question-border {
     border: 1px solid black;
+}
+
+.hide{
+    display: none;
+}
+
+.border{
+    border: 3px solid red!important;
 }
