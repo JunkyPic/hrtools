@@ -16,7 +16,6 @@
         </div>
     </div>
 
-
     <div class="row justify-content-center">
         <div class="col-md-12 spacing-top">
             <form method="POST" action="{{ route('questionAdd') }}" enctype="multipart/form-data">

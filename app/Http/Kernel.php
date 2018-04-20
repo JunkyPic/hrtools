@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\InviteRequest;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
 use App\Http\Middleware\UnauthorizedRequestApi;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -56,6 +57,7 @@ class Kernel extends HttpKernel
         'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
         'redirect_if_not_authenticated' => RedirectIfNotAuthenticated::class,
         'api_request' => UnauthorizedRequestApi::class,
+        'invite_request' => InviteRequest::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,

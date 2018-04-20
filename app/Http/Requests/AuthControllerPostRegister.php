@@ -25,7 +25,6 @@ class AuthControllerPostRegister extends FormRequest
     {
         return [
             'username' => 'required|string|max:50',
-            'email' => 'required|string|unique:users|email',
             'password' => 'required|string|min:6|confirmed',
         ];
     }
@@ -36,9 +35,6 @@ class AuthControllerPostRegister extends FormRequest
     public function messages() {
         return [
             'username.required' => 'The username is required.',
-            'email.required' => 'The email is required.',
-            'email.unique' => 'The email is already registered.',
-            'email.email' => 'The email is invalid.',
             'username.max' => 'The username must be at most 50 characters long.',
             'username.unique' => 'Sorry, that username is already taken.',
             'password.min' => 'The password must be at least 6 characters long.',

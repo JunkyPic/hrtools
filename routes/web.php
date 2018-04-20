@@ -10,10 +10,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Invalid token route
+Route::get('/invalid', 'IssueInviteController@invalidToken')->name('invalidToken');
+
 Route::get('/', 'HomeController@home')->name('home');
 
 Route::get('/login', 'AuthController@getLogin')->name('getLogin');
-Route::get('/register', 'AuthController@getRegister')->name('getRegister');
+Route::get('/register', 'AuthController@getRegister')->name('getRegister')->middleware('invite_request');
 
 Route::post('/login', 'AuthController@postLogin')->name('postLogin');
 Route::post('/register', 'AuthController@postRegister')->name('postRegister');
@@ -30,4 +34,8 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/question/{id}', 'QuestionController@show')->name('questionShow');
 
     Route::get('/questions', 'QuestionController@all')->name('questionsAll');
+
+    // Invite issue
+    Route::get('/invite', 'IssueInviteController@show')->name('getIssueInvite');
+    Route::post('/invite', 'IssueInviteController@issue')->name('postIssueInvite');
 });

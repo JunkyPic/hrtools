@@ -27,7 +27,15 @@
             <li>
                 <a href="{{ route('userProfile') }}">My profile</a>
             </li>
+
+            <li class="sidebar-brand">
+                <a href="{{ route('getIssueInvite') }}">
+                    Invite
+                </a>
+            </li>
         </ul>
     </div>
 </div>
 @endif
+
+

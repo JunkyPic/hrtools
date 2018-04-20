@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthControllerPostLogin;
 use App\Http\Requests\AuthControllerPostRegister;
+use App\Models\Invite;
 use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -47,10 +48,21 @@ class AuthController extends Controller
     }
 
     /**
+     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getRegister() {
-        return view('auth.register');
+    public function getRegister(Request $request) {
+        if(!$request->query->has('token')){
+            abort(404);
+        }
+
+        $token = Invite::where(['token' => $request->query->get('token'), 'is_valid' => true])->first();
+        if(null === $token) {
+            abort(404);
+        }
+
+        return view('auth.register')->with(['token' => $token]);
     }
 
     /**
@@ -59,13 +71,23 @@ class AuthController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postRegister(AuthControllerPostRegister $request) {
+        if(!$request->request->has('token')){
+            abort(404);
+        }
+
+        $token = Invite::where(['token' => $request->request->get('token'), 'is_valid' => true])->first();
+
+        if(null === $token) {
+            abort(404);
+        }
+
         User::create([
             'username' => $request->get('username'),
-            'email' => $request->get('email'),
+            'email' => $token->to,
             'password' => \Hash::make($request->get('password')),
         ]);
         if (\Auth::attempt([
-            'email' => $request->get('email'), 'password' => $request->get('password')])) {
+            'email' => $token->to, 'password' => $request->get('password')])) {
             return redirect()->route('adminFront');
         }
 
