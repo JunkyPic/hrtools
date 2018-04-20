@@ -36,6 +36,7 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/question/update/image', 'QuestionController@updateImages')->name('questionUpdateImages');
 
     Route::get('/questions', 'QuestionController@all')->name('questionsAll');
+    Route::post('//question/{id}/delete', 'QuestionController@delete')->name('questionDelete');
 
     // Invite issue
     Route::get('/invite', 'IssueInviteController@show')->name('getIssueInvite');

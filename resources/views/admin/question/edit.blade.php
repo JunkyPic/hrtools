@@ -81,7 +81,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="image__delete_interface_all">
                     @if(null !== $question->images() && $question->images()->count() >= 1)
                         <div class="row offset-2">
                             <div class="col-lg-10 text-center text-primary">
@@ -125,10 +125,54 @@
             </form>
         </div>
     </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-12 spacing-top">
+            <div class="form-group row mb-0">
+                <div class="col-md-10 offset-md-2">
+                    <button type="button" class="btn btn-danger btn-lg btn-block waves-effect waves-light" data-toggle="modal" data-target="#deleteModal">
+                        {{ __('Delete') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="spacing-top">
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Are you sure you want to delete this question?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>This action cannot be undone, all associated images will also be deleted</p>
+                    <p>If this question was part of a test it will also be removed from it</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="POST" action="{{ route('questionDelete', ['id' => $question->id]) }}">
+                        @csrf
+                            <button type="submit" class="btn btn-danger">
+                                {{ __('Delete') }}
+                            </button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 @endsection
 <input type="hidden" id="image_update_route" value="{{ route('questionUpdateImages') }}">
 <input type="hidden" id="question_id" value="{{ $question->id }}">
 
 @section('scripts')
     <script type="text/javascript" src="{{ URL::asset('js/question-image-update.js') }}"></script>
+    <script type="text/javascript">
+        $('#myModal').modal('toggle');
+    </script>
 @endsection

@@ -56,14 +56,37 @@ class QuestionController extends Controller
      */
     public function all()
     {
-        return view('admin.question.questions')->with(['questions' => Question::with('images')->paginate(10)]);
+        return view('admin.question.questions')->with(['questions' => Question::with('images')->orderBy('created_at', 'DESC')->paginate(10)]);
     }
 
     /**
-     * @param $question_id
+     * @param                 $question_id
+     * @param Question        $question
+     * @param ImageRepository $image_repository
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
-    public function delete($question_id)
+    public function delete($question_id, Question $question, ImageRepository $image_repository)
     {
+        $question = $question->find($question_id);
+
+        if(null === $question) {
+            return redirect()->back()->with(['message' => 'Unable to find question in database']);
+        }
+
+        $images = $question->images()->get();
+
+        $image_repository->remove($images);
+        $question->images()->detach();
+
+        try {
+            $question->delete();
+        }catch (\Exception $exception) {
+            return redirect()->back()->with(['message' => 'Unable to delete question']);
+        }
+
+        return redirect()->route('questionsAll')->with(['message' => 'Question deleted']);
 
     }
 

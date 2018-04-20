@@ -53,13 +53,19 @@ function updateImages(ids, q_id, route) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function(data){
-            console.log(data);
             if(data.hasOwnProperty('success') && data.success == true) {
                 $.each(data.ids, function( index, value ) {
                     $('#image_row_' + value).remove();
                     $('#message_display').show();
                     $('#message_output').html(data.message);
                 });
+                var regex = $('[id^=image_row_]').filter(function() {
+                    return $(this).attr('id').match(/image_row_[0-9]+/);
+                });
+                if(regex.length === 0) {
+                    $('#image__delete_interface_all').hide();
+                }
+
             } else {
                 $('#message_display').show();
                 $('#message_output').html(data.message);
