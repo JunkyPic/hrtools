@@ -5,16 +5,9 @@
 @endsection
 
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-md-12 spacing-top text-center">
-            @if(session('message'))
-            <div class="alert alert-dismissible alert-success">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>{{ session('message') }}</strong>
-            </div>
-            @endif
-        </div>
+    <div class="spacing-top">
     </div>
+    @include('includes.message')
 
     <div class="row justify-content-center">
         <div class="col-md-12 spacing-top">
@@ -34,10 +27,8 @@
                         @endif
                     </div>
                 </div>
-
                 <div class="form-group row">
                     <label for="body" class="col-md-2 col-form-label text-md-right">{{ __('Body') }}</label>
-
                     <div class="col-md-10">
                         <textarea id="body" rows="10"
                                   class="form-control{{ $errors->has('body') ? ' is-invalid' : '' }}" name="body"
@@ -67,6 +58,23 @@
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <label for="images" class="col-md-2 col-form-label text-md-right">{{ __('Tags') }}</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" id="search-input" placeholder="Search tags">
+                        <small class="form-text text-muted">Search for tags here and they'll be auto-completed, this is not required but it is recommended
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group row" id="tags_area">
+                    <label for="current_tags" class="col-md-2 col-form-label text-md-right">{{ __('Current tags') }}</label>
+                    <div class="col-md-10" id="current_tags">
+                    </div>
+                </div>
+                <div id="hidden_tags">
+                </div>
+
                 <div class="form-group row mb-0">
                     <div class="col-md-10 offset-md-2">
                         <button type="submit" class="btn btn-primary btn-lg btn-block">
@@ -77,4 +85,11 @@
             </form>
         </div>
     </div>
+
+    <input type="hidden" value="{{ route('searchTags') }}" id="tags_api_route">
+@endsection
+
+@section('scripts')
+    <script type="text/javascript" src="{{ URL::asset('js/bootstrap-typeahead.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/question-tags.js') }}"></script>
 @endsection

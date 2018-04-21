@@ -44,20 +44,21 @@ class AuthController extends Controller
             return redirect()->route('adminFront');
         }
 
-        return redirect()->back()->withErrors(['message' => 'Something went wrong, try again.']);
+        return redirect()->back()->withErrors(['message' => 'Something went wrong, try again.', 'alert_type' => 'danger']);
     }
 
     /**
      * @param Request $request
+     * @param Invite  $invite
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return $this
      */
-    public function getRegister(Request $request) {
+    public function getRegister(Request $request, Invite $invite) {
         if(!$request->query->has('token')){
             abort(404);
         }
 
-        $token = Invite::where(['token' => $request->query->get('token'), 'is_valid' => true])->first();
+        $token = $invite->where(['token' => $request->query->get('token'), 'is_valid' => true])->first();
         if(null === $token) {
             abort(404);
         }
@@ -67,15 +68,16 @@ class AuthController extends Controller
 
     /**
      * @param AuthControllerPostRegister $request
+     * @param Invite                     $invite
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postRegister(AuthControllerPostRegister $request) {
+    public function postRegister(AuthControllerPostRegister $request, Invite $invite) {
         if(!$request->request->has('token')){
             abort(404);
         }
 
-        $token = Invite::where(['token' => $request->request->get('token'), 'is_valid' => true])->first();
+        $token = $invite->where(['token' => $request->request->get('token'), 'is_valid' => true])->first();
 
         if(null === $token) {
             abort(404);

@@ -4,15 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model
+/**
+ * Class Chapter
+ *
+ * @package App\Models
+ */
+class Chapter extends Model
 {
+    /**
+     * @var string
+     */
+    protected $table = 'chapters';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'tag',
+        'chapter',
     ];
 
     /**
@@ -21,10 +31,10 @@ class Tag extends Model
     public $timestamps = true;
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * The users that belong to the role.
      */
-    public function questions()
+    public function tests()
     {
-        return $this->belongsToMany(Question::class, 'tag_question');
+        return $this->belongsToMany(Test::class);
     }
 }

@@ -11,16 +11,7 @@
 @section('content')
     <div class="spacing-top">
     </div>
-    @if(session('message'))
-        <div class="row justify-content-center">
-            <div class="col-md-10 offset-2 text-center">
-                <div class="alert alert-dismissible alert-success">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>{{ session('message') }}</strong>
-                </div>
-            </div>
-        </div>
-    @endif
+    @include('includes.message')
 
     <div class="row justify-content-center hide" id="message_display">
         <div class="col-md-10 offset-2 text-center">
@@ -65,6 +56,24 @@
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <label for="images" class="col-md-2 col-form-label text-md-right">{{ __('Tags') }}</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" id="search-input" placeholder="Search tags">
+                        <small class="form-text text-muted">Search for tags here and they'll be auto-completed, this is not required but it is recommended
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group row" id="tags_area">
+                    <label for="current_tags" class="col-md-2 col-form-label text-md-right">{{ __('Current tags') }}</label>
+                    <div class="col-md-10" id="current_tags">
+                        @foreach($question->tags as $tag)
+                            <div class="col-lg-2" onclick="manageTag($(this));" id="tag_id_{{ $tag->id }}" data-tag-id="{{ $tag->id }}"><button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <span class="badge badge-primary">{{ $tag->tag }}</span></div>
+                        @endforeach
+                    </div>
+                </div>
                 <div class="form-group row">
                     <label for="images" class="col-md-2 col-form-label text-md-right">{{ __('Add Images') }}</label>
                     <div class="col-md-10">
@@ -164,15 +173,15 @@
             </div>
         </div>
     </div>
-
-
+    <input type="hidden" value="{{ route('searchTags') }}" id="tags_api_route">
+    <input type="hidden" value="{{ $question->id }}" id="qid">
+    <input type="hidden" value="{{ route('manageTag') }}" id="manage_tag_route">
 @endsection
 <input type="hidden" id="image_update_route" value="{{ route('questionUpdateImages') }}">
 <input type="hidden" id="question_id" value="{{ $question->id }}">
 
 @section('scripts')
     <script type="text/javascript" src="{{ URL::asset('js/question-image-update.js') }}"></script>
-    <script type="text/javascript">
-        $('#myModal').modal('toggle');
-    </script>
+    <script type="text/javascript" src="{{ URL::asset('js/bootstrap-typeahead.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/question-edit-tags.js') }}"></script>
 @endsection

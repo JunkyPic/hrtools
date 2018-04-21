@@ -16,6 +16,8 @@ class Image extends Model
         'alias', 'name',
     ];
 
+    public $timestamps = true;
+
     /**
      * The users that belong to the role.
      */

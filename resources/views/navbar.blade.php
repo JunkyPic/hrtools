@@ -16,11 +16,16 @@
             <li>
                 <a href="{{ route('questionCreate') }}">Add</a>
             </li>
+
             <li class="sidebar-brand">
-                <a href="#">
-                    Other stuff
+                <a href="{{ route('tagsAll') }}">
+                    Tags
                 </a>
             </li>
+            <li>
+                <a href="{{ route('tagCreate') }}">Add</a>
+            </li>
+
             <li>
                 <a href="{{ route('adminFront') }}">Admin</a>
             </li>

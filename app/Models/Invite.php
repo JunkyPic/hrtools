@@ -17,4 +17,6 @@ class Invite extends Model
         'is_valid',
     ];
 
+    public $timestamps = true;
+
 }

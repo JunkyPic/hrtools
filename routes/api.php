@@ -14,5 +14,6 @@
 Route::middleware(['api_request'])->group(function () {
     Route::namespace('Api')->group(function () {
         Route::get('/q/search', 'QuestionController@search')->name('searchQuestions');
+        Route::get('/t/search', 'TagController@search')->name('searchTags');
     });
 });

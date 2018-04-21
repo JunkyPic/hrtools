@@ -5,15 +5,33 @@
 @endsection
 
 @section('content')
+    <div class="spacing-top">
+    </div>
+    @include('includes.message')
 
-    <div class="row justify-content-center">
-        <div class="col-md-12 spacing-top text-center">
-            @if(session('message'))
-                <div class="alert alert-dismissible alert-success">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>{{ session('message') }}</strong>
-                </div>
-            @endif
+    <div class="row">
+        <div class="col-lg-12 spacing-top">
+            <form method="get" action="{{ route('questionsAll') }}" class="form-inline">
+                <label class="mr-sm-2" for="tags">Tags</label>
+                <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="tags" name="tag">
+                    <option selected value="NA">Choose...</option>
+                    @foreach($tags as $t)
+                        @if($tag == $t->id)
+                            <option value="{{ $t->id }}" selected>{{ $t->tag }}</option>
+                        @else
+                            <option value="{{ $t->id }}">{{ $t->tag }}</option>
+                        @endif
+                    @endforeach
+                </select>
+                <label class="mr-sm-2" for="inlineFormCustomSelect">Order</label>
+                <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelect" name="order">
+                    <option selected value="NA" @if($order == 'NAN') selected @endif>Choose...</option>
+                    <option value="DESC" @if($order == 'DESC') selected @endif>Newest First</option>
+                    <option value="ASC" @if($order == 'ASC') selected @endif>Oldest First</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
         </div>
     </div>
 
@@ -37,8 +55,19 @@
                         </h3>
                     </div>
                     <div class="col-lg-12">
-                        {{ $question->body }}
+                        @if(strlen($question->body) > 200)
+                            {{ substr($question->body, 0, 200) }}...
+                        @else
+                            {{ $question->body }}
+                        @endif
                     </div>
+                </div>
+                <div class="spacing-top row">
+                    @foreach($question->tags as $tag)
+                        <div class="col-md-1 text-center">
+                            <a href="{{ route('questionsTaggedWith', ['tag' => $tag->tag]) }}"><span class="badge badge-primary">{{ $tag->tag }}</span></a>
+                        </div>
+                    @endforeach
                 </div>
                 <div class="spacing-top row">
                     @foreach($question->images as $image)
@@ -52,7 +81,11 @@
         @endforeach
         <div class="row spacing-top">
             <div class="col-lg-12 pagination pagination-centered justify-content-center">
-                {{ $questions->links() }}
+                @if(\Illuminate\Support\Facades\Input::get('tag'))
+                    {{ $questions->appends(['tag' => \Illuminate\Support\Facades\Input::get('tag'), 'order' => $order])->links() }}
+                @else
+                    {{ $questions->appends(['order' => $order])->links() }}
+                @endif
             </div>
         </div>
     @endif
@@ -62,5 +95,4 @@
 @section('scripts')
     <script type="text/javascript" src="{{ URL::asset('js/bootstrap-typeahead.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/question-search.js') }}"></script>
-
 @endsection

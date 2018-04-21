@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\QuestionControllerPostCreateQuestion;
 use App\Http\Requests\QuestionControllerPostEditQuestion;
 use App\Models\Question;
+use App\Models\Tag;
 use App\Repository\ImageRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,16 +32,19 @@ class QuestionController extends Controller
                 $image_ids[] = $image->id;
             }
         }
-
         if ($question = Question::create($request->except(['_token', 'images']))) {
             if (isset($image_ids)) {
                 $question->images()->attach($image_ids);
             }
+            if ($request->has('tags') && ! empty($request->get('tags'))) {
+                $tags = $request->get('tags');
+                $question->tags()->attach($tags);
+            }
 
-            return redirect()->back()->with(['message' => 'Question created successfully']);
+            return redirect()->back()->with(['message' => 'Question created successfully', 'alert_type' => 'success']);
         }
 
-        return redirect()->back()->with(['message' => 'Looks like something went wrong']);
+        return redirect()->back()->with(['message' => 'Looks like something went wrong', 'alert_type' => 'danger']);
     }
 
     /**
@@ -52,11 +56,55 @@ class QuestionController extends Controller
     }
 
     /**
+     * @param Request  $request
+     * @param Question $question
+     * @param Tag      $tag_model
+     *
      * @return $this
      */
-    public function all()
+    public function all(Request $request, Question $question, Tag $tag_model)
     {
-        return view('admin.question.questions')->with(['questions' => Question::with('images')->orderBy('created_at', 'DESC')->paginate(10)]);
+        // Retrieve possible filter list and pass them on
+        $tags = $tag_model->select(['id', 'tag'])->get();
+
+        //check if there's something to filter
+        $order = 'DESC';
+        $tag = null;
+
+        if($request->query->has('tag') && 'NA' !== $request->query->get('tag')) {
+            $tag = $request->query->get('tag');
+        }
+
+        if($request->query->has('order')) {
+            $order = $request->query->get('order');
+        }
+
+        if(null !== $tag) {
+            $q = $question
+                ->whereHas(
+                    'tags',
+                    function ($query) use ($tag){
+                        $query->where('tags.id', '=', $tag);
+                    }
+                )
+                ->with('images')
+                ->orderBy('created_at', $order)
+                ->paginate(10);
+        } else {
+            $q = $question
+                ->with(['images', 'tags'])
+                ->orderBy('created_at', $order)
+                ->paginate(10);
+        }
+
+        return view('admin.question.questions')->with(
+            [
+                'questions' => $q,
+                'tags' => $tags,
+                'tag' => $tag ?? 'NAN',
+                'order' => $order,
+            ]
+        );
     }
 
     /**
@@ -71,22 +119,25 @@ class QuestionController extends Controller
     {
         $question = $question->find($question_id);
 
-        if(null === $question) {
-            return redirect()->back()->with(['message' => 'Unable to find question in database']);
+        if (null === $question) {
+            return redirect()->back()->with(
+                ['message' => 'Unable to find question in database', 'alert_type' => 'danger']
+            );
         }
 
         $images = $question->images()->get();
 
         $image_repository->remove($images);
         $question->images()->detach();
+        $question->tags()->detach();
 
-        try {
+        try{
             $question->delete();
-        }catch (\Exception $exception) {
+        }catch (\Exception $exception){
             return redirect()->back()->with(['message' => 'Unable to delete question']);
         }
 
-        return redirect()->route('questionsAll')->with(['message' => 'Question deleted']);
+        return redirect()->route('questionsAll')->with(['message' => 'Question deleted', 'alert_type' => 'success']);
 
     }
 
@@ -153,6 +204,54 @@ class QuestionController extends Controller
         );
     }
 
+    public function manageTag(Request $request, Question $question)
+    {
+        if ( ! $request->has('qid')) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'Parameter missing from job',
+                ]
+            );
+        }
+        $question_id = $request->get('qid');
+
+        if ($request->has('remove') && null !== $request->get('remove')) {
+            $question = $question->find($question_id);
+            $question->tags()->detach($request->get('remove'));
+
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'status'  => 200,
+                    'message' => 'Tag removed successfully',
+                ]
+            );
+        }
+
+        if ($request->has('add') && null !== $request->get('add')) {
+            $question = $question->find($question_id);
+            $question->tags()->attach($request->get('add'));
+
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'status'  => 200,
+                    'message' => 'Tag added successfully',
+                ]
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'success' => false,
+                'status'  => 500,
+                'message' => 'Something went wrong',
+            ]
+        );
+    }
+
     /**
      * @param                                    $question_id
      * @param QuestionControllerPostEditQuestion $request
@@ -182,10 +281,15 @@ class QuestionController extends Controller
                 $question->images()->attach($image_ids);
             }
 
-            return redirect()->back()->with(['message' => 'Question updated successfully']);
+            if ($request->has('tags') && ! empty($request->get('tags'))) {
+                $tags = $request->get('tags');
+                $question->tags()->attach($tags);
+            }
+
+            return redirect()->back()->with(['message' => 'Question updated successfully', 'alert_type' => 'success']);
         }
 
-        return redirect()->back()->with(['message' => 'Looks like something went wrong']);
+        return redirect()->back()->with(['message' => 'Looks like something went wrong', 'alert_type' => 'danger']);
     }
 
     /**
@@ -197,7 +301,29 @@ class QuestionController extends Controller
     public function edit($question_id, Question $question)
     {
         return view('admin.question.edit')->with(
-            ['question' => $question->with(['images'])->where(['id' => $question_id])->first()]
+            ['question' => $question->with(['images', 'tags'])->where(['id' => $question_id])->first()]
         );
+    }
+
+    /**
+     * @param Request  $request
+     * @param Question $question
+     *
+     * @return $this
+     */
+    public function questionsTaggedWith(Request $request, Question $question)
+    {
+        $q = $question
+            ->whereHas(
+                'tags',
+                function ($query) use ($request){
+                    $query->where('tags.tag', '=', $request->query('tag'));
+                }
+            )
+            ->with('images')
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10);
+
+        return view('admin.question.questions')->with(['questions' => $q]);
     }
 }

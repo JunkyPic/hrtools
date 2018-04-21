@@ -16,16 +16,27 @@ use Illuminate\Support\Str;
  */
 class IssueInviteController extends Controller
 {
-    public function show()
+    /**
+     * @param User $user
+     *
+     * @return $this
+     */
+    public function show(User $user)
     {
-        return view('admin.invite.issue')->with(['user' => User::find(1)]);
+        return view('admin.invite.issue')->with(['user' => $user->find(1)]);
     }
 
-    public function issue(IssueInvitePostRequest $request)
+    /**
+     * @param IssueInvitePostRequest $request
+     * @param Invite                 $invite
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function issue(IssueInvitePostRequest $request, Invite $invite)
     {
         $token = Str::random(50);
 
-        $current_invite = Invite::where(['to' => $request->get('to'), 'is_valid' => true])->first();
+        $current_invite = $invite->where(['to' => $request->get('to'), 'is_valid' => true])->first();
 
         if (null !== $current_invite && $current_invite->count() >= 1) {
             $current_invite->is_valid = false;
@@ -54,15 +65,21 @@ class IssueInviteController extends Controller
             }
         );
 
-        return redirect()->back()->with(['message' => 'Email sent!']);
+        return redirect()->back()->with(['message' => 'Email sent!', 'alert_type' => 'success']);
     }
 
-    public function invalidToken(Request $request) {
+    /**
+     * @param Request $request
+     * @param Invite  $invite
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function invalidToken(Request $request, Invite $invite) {
         if(!$request->has('token')){
             abort(404);
         }
 
-        $valid = Invite::where('token', $request->get('token'))->first();
+        $valid = $invite->where('token', $request->get('token'))->first();
         if(null === $valid){
             abort(404);
         }

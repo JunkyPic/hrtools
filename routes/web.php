@@ -12,7 +12,7 @@
 */
 
 // Invalid token route
-Route::get('/invalid', 'IssueInviteController@invalidToken')->name('invalidToken');
+Route::get('/i', 'IssueInviteController@invalidToken')->name('invalidToken');
 
 Route::get('/', 'HomeController@home')->name('home');
 
@@ -36,9 +36,20 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/question/update/image', 'QuestionController@updateImages')->name('questionUpdateImages');
 
     Route::get('/questions', 'QuestionController@all')->name('questionsAll');
-    Route::post('//question/{id}/delete', 'QuestionController@delete')->name('questionDelete');
+    Route::post('/question/{id}/delete', 'QuestionController@delete')->name('questionDelete');
+    Route::get('/questions/tagged', 'QuestionController@questionsTaggedWith')->name('questionsTaggedWith');
 
     // Invite issue
     Route::get('/invite', 'IssueInviteController@show')->name('getIssueInvite');
     Route::post('/invite', 'IssueInviteController@issue')->name('postIssueInvite');
+
+    // Tags
+    Route::get('/tags', 'TagController@all')->name('tagsAll');
+    Route::get('/tag/add', 'TagController@create')->name('tagCreate');
+    Route::post('/tag/add', 'TagController@add')->name('tagAdd');
+    Route::get('/tag/{id}/edit', 'TagController@edit')->name('tagEdit');
+    Route::post('/tag/{id}/edit', 'TagController@editPost')->name('tagEditPost');
+    Route::post('/tag/{id}/delete', 'TagController@delete')->name('tagDelete');
+    Route::post('/tag/manageTag', 'QuestionController@manageTag')->name('manageTag');
+
 });

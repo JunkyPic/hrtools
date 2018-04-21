@@ -15,12 +15,32 @@ class Question extends Model
         'title', 'body',
     ];
 
+    /**
+     * @var bool
+     */
+    public $timestamps = true;
 
     /**
-     * The users that belong to the role.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function images()
     {
         return $this->belongsToMany(Image::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'tag_question');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function tests()
+    {
+        return $this->belongsToMany(Test::class, 'test_question');
     }
 }
