@@ -14,7 +14,7 @@
 </head>
 <body>
 @include('navbar')
-<div class="container">
+<div class="container padding-40">
     @yield('content')
 </div>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.min.js') }}"></script>

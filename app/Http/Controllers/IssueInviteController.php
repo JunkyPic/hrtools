@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IssueInvitePostRequest;
 use App\Models\Invite;
 use App\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -85,5 +86,48 @@ class IssueInviteController extends Controller
         }
 
         return view('responses.invalid_invite');
+    }
+
+    public function revoke(Request $request, Invite $invite_model) {
+        if(!$request->has('invite_id')) {
+            return new JsonResponse([
+               'success' => false,
+               'message' => 'Parameter missing from job',
+               'status'  => 500,
+            ]);
+        }
+
+        try{
+            $invite = $invite_model->where(['id' => $request->get('invite_id')])->first();
+
+            if(0 == (int)$invite->is_valid) {
+                return new JsonResponse([
+                    'success' => true,
+                    'message' => 'Invite already revoked',
+                    'status'  => 200,
+                ]);
+            }
+
+            $invite->is_valid = false;
+            $invite->save();
+        }catch (\Exception $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Unable to revoke invite',
+                'status'  => 500,
+            ]);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Invite revoked successfully',
+            'status'  => 200,
+        ]);
+    }
+
+    public function getUserInvites(Invite $invite_model) {
+        $invites = $invite_model->orderBy('created_at', 'DESC')->get();
+
+        return view('admin.invite.users.invites')->with(['invites' => $invites]);
     }
 }

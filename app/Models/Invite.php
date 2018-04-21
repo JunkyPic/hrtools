@@ -12,8 +12,10 @@ class Invite extends Model
      * @var array
      */
     protected $fillable = [
-        'token', 'validity',
-        'from', 'to',
+        'token',
+        'validity',
+        'from',
+        'to',
         'is_valid',
     ];
 

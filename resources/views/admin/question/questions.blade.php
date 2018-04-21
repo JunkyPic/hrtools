@@ -87,7 +87,7 @@
                     </div>
                     @if($chapters->count() >= 1)
                         <div class="col-lg-2">
-                            <label class="mr-sm-2">Associate to chapter
+                            <label class="mr-sm-2"><small class="text-muted">Associate to chapter</small>
                                 <select class="custom-select mb-2 mr-sm-2 mb-sm-0 associate-question" name="order">
                                     <option selected data-qid="NA" value="NA">Choose...</option>
                                     @foreach($chapters as $chapter)
@@ -101,7 +101,7 @@
 
                     @if($chapters->count() >= 1)
                         <div class="col-lg-2">
-                            <label class="mr-sm-2">Remove from chapter
+                            <label class="mr-sm-2"><small class="text-muted">Remove from chapter</small>
                                 <select class="custom-select mb-2 mr-sm-2 mb-sm-0 remove-question" name="order">
                                     <option selected data-qid="NA" value="NA">Choose...</option>
                                     @foreach($chapters as $chapter)
@@ -132,7 +132,7 @@
                     </div>
                     @foreach($question->chapters as $chapter)
                         <div class="col-md-2 text-center">
-                            <a href="{{ route('chapterGetEdit', ['id' => $chapter->id]) }}"><span class="badge badge-primary">{{ $chapter->chapter }}</span></a>
+                            <a href="{{ route('questionsByChapters', ['chapter' => $chapter->chapter]) }}"><span class="badge badge-primary">{{ $chapter->chapter }}</span></a>
                         </div>
                     @endforeach
                 </div>
@@ -150,6 +150,7 @@
         @endforeach
         <div class="row spacing-top">
             <div class="col-lg-12 pagination pagination-centered justify-content-center">
+                {{ $links->links() }}
                 {{--@if(\Illuminate\Support\Facades\Input::get('tag'))--}}
                     {{--{{ $questions->appends(['tag' => \Illuminate\Support\Facades\Input::get('tag'), 'order' => $order])->links() }}--}}
                 {{--@else--}}
