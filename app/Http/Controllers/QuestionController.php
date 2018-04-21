@@ -84,7 +84,7 @@ class QuestionController extends Controller
                 ->whereHas(
                     'tags',
                     function ($query) use ($tag){
-                        $query->where('tags.id', '=', $tag);
+                        $query->where('tags.tag', '=', $tag);
                     }
                 )
                 ->with('images')
@@ -308,22 +308,53 @@ class QuestionController extends Controller
     /**
      * @param Request  $request
      * @param Question $question
+     * @param Tag      $tag_model
      *
      * @return $this
      */
-    public function questionsTaggedWith(Request $request, Question $question)
+    public function questionsTaggedWith(Request $request, Question $question, Tag $tag_model)
     {
-        $q = $question
-            ->whereHas(
-                'tags',
-                function ($query) use ($request){
-                    $query->where('tags.tag', '=', $request->query('tag'));
-                }
-            )
-            ->with('images')
-            ->orderBy('created_at', 'DESC')
-            ->paginate(10);
 
-        return view('admin.question.questions')->with(['questions' => $q]);
+        // Retrieve possible filter list and pass them on
+        $tags = $tag_model->select(['id', 'tag'])->get();
+
+        //check if there's something to filter
+        $order = 'DESC';
+        $tag = null;
+
+        if($request->query->has('tag') && 'NA' !== $request->query->get('tag')) {
+            $tag = $request->query->get('tag');
+        }
+
+        if($request->query->has('order')) {
+            $order = $request->query->get('order');
+        }
+
+        if(null !== $tag) {
+            $q = $question
+                ->whereHas(
+                    'tags',
+                    function ($query) use ($tag){
+                        $query->where('tags.tag', '=', $tag);
+                    }
+                )
+                ->with('images')
+                ->orderBy('created_at', $order)
+                ->paginate(10);
+        } else {
+            $q = $question
+                ->with(['images', 'tags'])
+                ->orderBy('created_at', $order)
+                ->paginate(10);
+        }
+
+        return view('admin.question.questions')->with(
+            [
+                'questions' => $q,
+                'tags' => $tags,
+                'tag' => $tag ?? 'NAN',
+                'order' => $order,
+            ]
+        );
     }
 }

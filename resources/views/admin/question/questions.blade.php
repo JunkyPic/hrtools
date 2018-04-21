@@ -16,10 +16,10 @@
                 <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="tags" name="tag">
                     <option selected value="NA">Choose...</option>
                     @foreach($tags as $t)
-                        @if($tag == $t->id)
-                            <option value="{{ $t->id }}" selected>{{ $t->tag }}</option>
+                        @if($tag == $t->tag)
+                            <option value="{{ $t->tag }}" selected>{{ $t->tag }}</option>
                         @else
-                            <option value="{{ $t->id }}">{{ $t->tag }}</option>
+                            <option value="{{ $t->tag }}">{{ $t->tag }}</option>
                         @endif
                     @endforeach
                 </select>
