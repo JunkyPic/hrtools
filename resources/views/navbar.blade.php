@@ -25,6 +25,15 @@
             <li>
                 <a href="{{ route('tagCreate') }}">Add</a>
             </li>
+            <li class="sidebar-brand">
+                <a href="{{ route('chapterAll') }}">
+                    Chapters
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('chapterGetCreate') }}">Add</a>
+            </li>
 
             <li>
                 <a href="{{ route('adminFront') }}">Admin</a>

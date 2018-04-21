@@ -20,7 +20,7 @@
                 @foreach($item as $tag)
                     <div class="col-md-2 text-center">
                         <h3>
-                            <span class="badge badge-primary">{{ $tag->tag }} </span>
+                            <a href="{{ route('questionsTaggedWith', ['tag' => $tag->tag]) }}"><span class="badge badge-primary">{{ $tag->tag }} </span></a>
                         </h3>
                         <a href="{{ route('tagEdit', ['id' => $tag->id]) }}">
                             <small class="text-muted">edit</small>

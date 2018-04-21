@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\QuestionControllerPostCreateQuestion;
 use App\Http\Requests\QuestionControllerPostEditQuestion;
+use App\Models\Chapter;
 use App\Models\Question;
 use App\Models\Tag;
 use App\Repository\ImageRepository;
@@ -17,6 +18,112 @@ use Illuminate\Http\Request;
  */
 class QuestionController extends Controller
 {
+    /**
+     * @param Request $request
+     * @param Chapter $chapter_model
+     *
+     * @return JsonResponse
+     */
+    public function questionChapterAssociate(Request $request, Chapter $chapter_model)
+    {
+        if ( ! $request->has('qid') || ! $request->has('chapter_id') || !$request->has('type')) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'Parameter missing from job',
+                ]
+            );
+        }
+
+        $qid = $request->get('qid');
+        $chapter_id = $request->get('chapter_id');
+
+        try {
+            $chapter = $chapter_model->find($chapter_id);
+        }catch (\Exception $exception) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'Unable to find chapter',
+                ]
+            );
+        }
+
+        if($request->get('type') == 'add') {
+            // Check if the question is already associated with this chapter
+            try {
+                $associated =  $chapter
+                    ->questions()
+                    ->wherePivot('question_id', '=', $qid)
+                    ->wherePivot('chapter_id', '=', $chapter_id)
+                    ->first();
+
+                // Question is not associated with chapter
+                if(null === $associated) {
+                    $chapter->questions()->attach($qid);
+                }
+
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'status'  => 200,
+                        'message' => 'Question associated successfully to chapter',
+                    ]
+                );
+
+            }catch (\Exception $exception) {
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'status'  => 500,
+                        'message' => 'Unable to associate question to chapter',
+                    ]
+                );
+            }
+        }
+
+        // Remove question from association with chapter
+        try {
+            $associated =  $chapter
+                ->questions()
+                ->wherePivot('question_id', '=', $qid)
+                ->wherePivot('chapter_id', '=', $chapter_id)
+                ->first();
+
+            // Question is not associated with chapter
+            if(null === $associated) {
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'status'  => 200,
+                        'message' => 'Question is not associated with that chapter',
+                    ]
+                );
+            }
+
+            $chapter->questions()->detach($qid);
+
+        }catch (\Exception $exception) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'Unable to associate question to chapter',
+                ]
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'success' => true,
+                'status'  => 200,
+                'message' => 'Question disassociated successfully',
+            ]
+        );
+    }
+
     /**
      * @param QuestionControllerPostCreateQuestion $request
      * @param ImageRepository                      $image_repository
@@ -59,50 +166,65 @@ class QuestionController extends Controller
      * @param Request  $request
      * @param Question $question
      * @param Tag      $tag_model
+     * @param Chapter  $chapter_model
      *
      * @return $this
      */
-    public function all(Request $request, Question $question, Tag $tag_model)
+    public function all(Request $request, Question $question, Tag $tag_model, Chapter $chapter_model)
     {
         // Retrieve possible filter list and pass them on
         $tags = $tag_model->select(['id', 'tag'])->get();
+        $chapters = $chapter_model->all();
 
         //check if there's something to filter
         $order = 'DESC';
         $tag = null;
+        $chapter = null;
 
-        if($request->query->has('tag') && 'NA' !== $request->query->get('tag')) {
+        if ($request->query->has('tag') && 'NA' !== $request->query->get('tag')) {
             $tag = $request->query->get('tag');
         }
 
-        if($request->query->has('order')) {
+        if ($request->query->has('chapter') && 'NA' !== $request->query->get('chapter')) {
+            $chapter = $request->query->get('chapter');
+        }
+
+        if ($request->query->has('order')) {
             $order = $request->query->get('order');
         }
 
-        if(null !== $tag) {
+        $q = $question->with(['images', 'chapters', 'tags']);
+
+        if (null !== $tag) {
             $q = $question
                 ->whereHas(
                     'tags',
                     function ($query) use ($tag){
                         $query->where('tags.tag', '=', $tag);
                     }
-                )
-                ->with('images')
-                ->orderBy('created_at', $order)
-                ->paginate(10);
-        } else {
-            $q = $question
-                ->with(['images', 'tags'])
-                ->orderBy('created_at', $order)
-                ->paginate(10);
+                );
         }
+
+        if (null !== $chapter) {
+        $q = $question
+            ->whereHas(
+                'chapters',
+                function ($query) use ($chapter){
+                    $query->where('chapter', 'LIKE', '%' . $chapter . '%');
+                }
+            );
+        }
+
+        $q = $q->orderBy('created_at', $order)->paginate(10);
 
         return view('admin.question.questions')->with(
             [
                 'questions' => $q,
-                'tags' => $tags,
-                'tag' => $tag ?? 'NAN',
-                'order' => $order,
+                'tags'      => $tags,
+                'tag'       => $tag ?? 'NAN',
+                'order'     => $order,
+                'chapters'  => $chapters,
+                'chapter'  => $chapter,
             ]
         );
     }
@@ -127,18 +249,16 @@ class QuestionController extends Controller
 
         $images = $question->images()->get();
 
-        $image_repository->remove($images);
-        $question->images()->detach();
-        $question->tags()->detach();
-
         try{
+            $image_repository->remove($images);
+            $question->images()->detach();
+            $question->tags()->detach();
             $question->delete();
         }catch (\Exception $exception){
             return redirect()->back()->with(['message' => 'Unable to delete question']);
         }
 
         return redirect()->route('questionsAll')->with(['message' => 'Question deleted', 'alert_type' => 'success']);
-
     }
 
     /**
@@ -305,45 +425,37 @@ class QuestionController extends Controller
         );
     }
 
-    /**
-     * @param Request  $request
-     * @param Question $question
-     * @param Tag      $tag_model
-     *
-     * @return $this
-     */
-    public function questionsTaggedWith(Request $request, Question $question, Tag $tag_model)
-    {
-
+    public function questionsByChapters(Tag $tag_model, Chapter $chapter_model, Request $request, Question $question) {
         // Retrieve possible filter list and pass them on
         $tags = $tag_model->select(['id', 'tag'])->get();
+        $chapters = $chapter_model->all();
 
         //check if there's something to filter
         $order = 'DESC';
-        $tag = null;
+        $chapter = null;
 
-        if($request->query->has('tag') && 'NA' !== $request->query->get('tag')) {
-            $tag = $request->query->get('tag');
+        if ($request->query->has('chapter') && 'NA' !== $request->query->get('chapter')) {
+            $chapter = $request->query->get('chapter');
         }
 
-        if($request->query->has('order')) {
+        if ($request->query->has('order')) {
             $order = $request->query->get('order');
         }
 
-        if(null !== $tag) {
+        if (null !== $chapter) {
             $q = $question
                 ->whereHas(
-                    'tags',
-                    function ($query) use ($tag){
-                        $query->where('tags.tag', '=', $tag);
+                    'chapters',
+                    function ($query) use ($chapter){
+                        $query->where('chapter.chapter', '=', $chapter);
                     }
                 )
-                ->with('images')
+                ->with(['images', 'tags'])
                 ->orderBy('created_at', $order)
                 ->paginate(10);
-        } else {
+        }else {
             $q = $question
-                ->with(['images', 'tags'])
+                ->with(['images', 'tags', 'chapters'])
                 ->orderBy('created_at', $order)
                 ->paginate(10);
         }
@@ -351,10 +463,74 @@ class QuestionController extends Controller
         return view('admin.question.questions')->with(
             [
                 'questions' => $q,
-                'tags' => $tags,
-                'tag' => $tag ?? 'NAN',
-                'order' => $order,
+                'tags'      => $tags,
+                'tag'       => $tag ?? 'NAN',
+                'order'     => $order,
+                'chapters'  => $chapters,
             ]
         );
+    }
+
+    /**
+     * @param Request  $request
+     * @param Question $question
+     * @param Tag      $tag_model
+     * @param Chapter  $chapter_model
+     *
+     * @return $this
+     */
+    public function questionsTaggedWith(Request $request, Question $question, Tag $tag_model, Chapter $chapter_model)
+    {
+        // Retrieve possible filter list and pass them on
+        $tags = $tag_model->select(['id', 'tag'])->get();
+        $chapters = $chapter_model->all();
+
+        //check if there's something to filter
+        $order = 'DESC';
+        $tag = null;
+        $chapter = null;
+
+        if ($request->query->has('tag') && 'NA' !== $request->query->get('tag')) {
+            $tag = $request->query->get('tag');
+        }
+
+        if ($request->query->has('chapter') && 'NA' !== $request->query->get('chapter')) {
+            $chapter = $request->query->get('chapter');
+        }
+
+        if ($request->query->has('order')) {
+            $order = $request->query->get('order');
+        }
+
+        if (null !== $tag) {
+            $q = $question
+                ->whereHas(
+                    'tags',
+                    function ($query) use ($tag){
+                        $query->where('tags.tag', '=', $tag);
+                    }
+                )
+                ->with(['chapters', 'images'])
+                ->orderBy('created_at', $order)
+                ->paginate(10);
+        }else {
+            $q = $question
+                ->with(['chapters', 'images', 'tags'])
+                ->orderBy('created_at', $order)
+                ->paginate(10);
+        }
+
+        return view('admin.question.questions')->with(
+            [
+                'questions' => $q,
+                'tags'      => $tags,
+                'tag'       => $tag ?? 'NAN',
+                'order'     => $order,
+                'chapters'  => $chapters,
+                'chapter'  => $chapter,
+            ]
+        );
+
+
     }
 }

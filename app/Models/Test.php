@@ -32,12 +32,4 @@ class Test extends Model
     {
         return $this->belongsToMany(Chapter::class);
     }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function questions()
-    {
-        return $this->belongsToMany(Question::class, 'test_question');
-    }
 }

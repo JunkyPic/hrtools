@@ -12,7 +12,8 @@ class Question extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'body',
+        'title',
+        'body',
     ];
 
     /**
@@ -37,10 +38,10 @@ class Question extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * The users that belong to the role.
      */
-    public function tests()
+    public function chapters()
     {
-        return $this->belongsToMany(Test::class, 'test_question');
+        return $this->belongsToMany(Chapter::class, 'chapter_question');
     }
 }

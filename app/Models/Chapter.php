@@ -23,6 +23,7 @@ class Chapter extends Model
      */
     protected $fillable = [
         'chapter',
+        'information',
     ];
 
     /**
@@ -36,5 +37,13 @@ class Chapter extends Model
     public function tests()
     {
         return $this->belongsToMany(Test::class);
+    }
+
+    /**
+     * The users that belong to the role.
+     */
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'chapter_question');
     }
 }

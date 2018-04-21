@@ -39,6 +39,8 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/question/{id}/delete', 'QuestionController@delete')->name('questionDelete');
     Route::get('/questions/tagged', 'QuestionController@questionsTaggedWith')->name('questionsTaggedWith');
 
+    Route::post('/question/chapter/associate', 'QuestionController@questionChapterAssociate')->name('questionChapterAssociate');
+
     // Invite issue
     Route::get('/invite', 'IssueInviteController@show')->name('getIssueInvite');
     Route::post('/invite', 'IssueInviteController@issue')->name('postIssueInvite');
@@ -51,5 +53,14 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/tag/{id}/edit', 'TagController@editPost')->name('tagEditPost');
     Route::post('/tag/{id}/delete', 'TagController@delete')->name('tagDelete');
     Route::post('/tag/manageTag', 'QuestionController@manageTag')->name('manageTag');
+
+    // Chapters
+    Route::get('/chapter/add', 'Chaptercontroller@getCreate')->name('chapterGetCreate');
+    Route::post('/chapter/add', 'Chaptercontroller@postCreate')->name('chapterPostCreate');
+    Route::get('/chapters', 'Chaptercontroller@all')->name('chapterAll');
+    Route::get('/chapter/{id}/edit', 'Chaptercontroller@getEdit')->name('chapterGetEdit');
+    Route::post('/chapter/{id}/edit', 'ChapterController@postEdit')->name('chapterPostEdit');
+    Route::post('/chapter/{id}/delete', 'ChapterController@delete')->name('chapterDelete');
+    Route::get('/questions/chapter', 'QuestionController@questionsByChapters')->name('questionsByChapters');
 
 });
