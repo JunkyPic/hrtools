@@ -15,17 +15,24 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Tags<span class="caret"></span></a>
-                    <div class="dropdown-menu" aria-labelledby="tags">
-                        <a class="dropdown-item" href="{{ route('tagsAll') }}">All</a>
-                        <a class="dropdown-item" href="{{ route('tagCreate') }}">Add</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Chapters<span class="caret"></span></a>
                     <div class="dropdown-menu" aria-labelledby="chapters">
                         <a class="dropdown-item" href="{{ route('chapterAll') }}">All</a>
                         <a class="dropdown-item" href="{{ route('chapterGetCreate') }}">Add</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Tests<span class="caret"></span></a>
+                    <div class="dropdown-menu" aria-labelledby="chapters">
+                        <a class="dropdown-item" href="{{ route('testAll') }}">All</a>
+                        <a class="dropdown-item" href="{{ route('testGetCreate') }}">Add</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Tags<span class="caret"></span></a>
+                    <div class="dropdown-menu" aria-labelledby="tags">
+                        <a class="dropdown-item" href="{{ route('tagsAll') }}">All</a>
+                        <a class="dropdown-item" href="{{ route('tagCreate') }}">Add</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -34,7 +41,7 @@
                         <a class="dropdown-item" href="{{ route('getIssueInvite') }}">Invite user</a>
                         <a class="dropdown-item" href="{{ route('getUserInvites') }}">User invites</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Invite candidate</a>
+                        <a class="dropdown-item" href="{{ route('candidateGetCreateInvite') }}">Invite candidate</a>
                     </div>
                 </li>
 

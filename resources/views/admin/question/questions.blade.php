@@ -151,11 +151,6 @@
         <div class="row spacing-top">
             <div class="col-lg-12 pagination pagination-centered justify-content-center">
                 {{ $links->links() }}
-                {{--@if(\Illuminate\Support\Facades\Input::get('tag'))--}}
-                    {{--{{ $questions->appends(['tag' => \Illuminate\Support\Facades\Input::get('tag'), 'order' => $order])->links() }}--}}
-                {{--@else--}}
-                    {{--{{ $questions->appends(['order' => $order, 'chapter' => $order, 'tag' => $tag])->links() }}--}}
-                {{--@endif--}}
             </div>
         </div>
     @endif

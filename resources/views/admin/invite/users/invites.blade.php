@@ -38,7 +38,11 @@
                         <td>{{$invite->from}}</td>
                         <td>{{number_format((float)$invite->validity / (60 * 60), 2, '.', '')}} hour(s)</td>
                         <td>{{ $invite->is_valid ? 'Yes' : 'No'}}</td>
-                        <td><a href="#" onclick="revokeUserInvite({{ $invite->id }});">Revoke</a></td>
+                        @if((int)$invite->is_valid === 1)
+                            <td><a href="#" onclick="revokeUserInvite({{ $invite->id }});">Revoke</a></td>
+                        @else
+                            <td><span class="text-muted">Revoked</span></td>
+                        @endif
                     </tr>
                 @endforeach
                 </tbody>

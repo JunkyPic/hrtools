@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChapterControllerPostCreateChapter;
 use App\Http\Requests\ChapterControllerPostEditChapter;
 use App\Models\Chapter;
+use App\Models\Test;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Class ChapterController
@@ -92,10 +95,128 @@ class ChapterController extends Controller
 
     /**
      * @param Chapter $chapter_model
+     * @param Test    $test_model
      *
      * @return $this
      */
-    public function all(Chapter $chapter_model) {
-        return view('admin.chapter.chapters')->with(['chapters' => $chapter_model->paginate(10)]);
+    public function all(Chapter $chapter_model, Test $test_model) {
+        return view('admin.chapter.chapters')->with([
+            'chapters' => $chapter_model->with(['tests'])->paginate(10),
+            'tests' => $test_model->get(),
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param Test    $test_model
+     *
+     * @return JsonResponse
+     */
+    public function chapterTestAssociate(Request $request, Test $test_model) {
+        // TODO: Set message form chapter/question dissasociation near each chapter/question
+        if ( ! $request->has('chapter_id') || ! $request->has('test_id') || ! $request->has('type')) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'Parameter missing from job',
+                ]
+            );
+        }
+
+        $chapter_id = $request->get('chapter_id');
+        $test_id = $request->get('test_id');
+
+        try{
+            $test = $test_model->find($test_id);
+        }catch (\Exception $exception){
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'Unable to find chapter',
+                ]
+            );
+        }
+
+        if ($request->get('type') == 'add') {
+            // Check if the chapter is already associated with this test
+            try{
+                $associated = $test
+                    ->chapters()
+                    ->wherePivot('test_id', '=', $test_id)
+                    ->wherePivot('chapter_id', '=', $chapter_id)
+                    ->first();
+
+                // Question is not associated with chapter
+                if (null === $associated) {
+                    $test->chapters()->attach($chapter_id);
+
+                    return new JsonResponse(
+                        [
+                            'success' => false,
+                            'status'  => 200,
+                            'message' => 'Chapter associated successfully to test',
+                        ]
+                    );
+                }
+
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'status'  => 200,
+                        'message' => 'Chapter is already associated with that test',
+                    ]
+                );
+
+            }catch (\Exception $exception){
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'status'  => 500,
+                        'message' => 'Unable to associate chapter to test',
+                    ]
+                );
+            }
+        }
+
+        // Remove chapter from association with test
+        try{
+            $associated = $test
+                ->chapters()
+                ->wherePivot('test_id', '=', $test_id)
+                ->wherePivot('chapter_id', '=', $chapter_id)
+                ->first();
+
+            // Question is not associated with chapter
+            if (null === $associated) {
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'status'  => 200,
+                        'message' => 'Chapter is not associated with that test',
+                    ]
+                );
+            }
+
+            $test->chapters()->detach($chapter_id);
+
+        }catch (\Exception $exception){
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'Unable to associate chapter to test',
+                ]
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'success' => true,
+                'status'  => 200,
+                'message' => 'Chapter disassociated from test successfully',
+            ]
+        );
     }
 }

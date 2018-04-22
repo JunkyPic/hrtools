@@ -140,10 +140,11 @@ class QuestionController extends Controller
     /**
      * @param QuestionControllerPostCreateQuestion $request
      * @param ImageRepository                      $image_repository
+     * @param Question                             $question_model
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function add(QuestionControllerPostCreateQuestion $request, ImageRepository $image_repository)
+    public function add(QuestionControllerPostCreateQuestion $request, ImageRepository $image_repository, Question $question_model)
     {
         if ($request->files->has('images')) {
             $images = $image_repository->store($request->files->get('images'));
@@ -152,7 +153,7 @@ class QuestionController extends Controller
                 $image_ids[] = $image->id;
             }
         }
-        if ($question = Question::create($request->except(['_token', 'images']))) {
+        if ($question = $question_model->create($request->except(['_token', 'images']))) {
             if (isset($image_ids)) {
                 $question->images()->attach($image_ids);
             }
@@ -207,7 +208,6 @@ class QuestionController extends Controller
         }
 
         $q = $question->with(['images', 'chapters', 'tags']);
-
 
         if (null !== $tag) {
             $q = $q->whereHas(
@@ -338,6 +338,12 @@ class QuestionController extends Controller
         );
     }
 
+    /**
+     * @param Request  $request
+     * @param Question $question
+     *
+     * @return JsonResponse
+     */
     public function manageTag(Request $request, Question $question)
     {
         if ( ! $request->has('qid')) {

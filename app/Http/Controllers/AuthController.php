@@ -41,7 +41,7 @@ class AuthController extends Controller
     public function postLogin(AuthControllerPostLogin $request) {
         if (\Auth::attempt($request->except('_token')))
         {
-            return redirect()->route('adminFront');
+            return redirect()->route('userProfile');
         }
 
         return redirect()->back()->withErrors(['message' => 'Something went wrong, try again.', 'alert_type' => 'danger']);
@@ -90,7 +90,7 @@ class AuthController extends Controller
         ]);
         if (\Auth::attempt([
             'email' => $token->to, 'password' => $request->get('password')])) {
-            return redirect()->route('adminFront');
+            return redirect()->route('userProfile');
         }
 
         return abort(520); // @TODO Rewrite this to something less 520ish

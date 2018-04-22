@@ -14,7 +14,13 @@
 // Invalid token route
 Route::get('/i', 'IssueInviteController@invalidToken')->name('invalidToken');
 
-Route::get('/', 'HomeController@home')->name('home');
+Route::get('/', 'CandidateController@validateInformation')->name('takeTest');
+Route::get('/t', 'CandidateController@preStartTest')->name('preStartTest');
+Route::get('/t/s', 'CandidateController@postStarTest')->name('postStartTest');
+Route::post('/t/e', 'CandidateController@postEndTest')->name('postEndTest');
+Route::get('/t/d', 'CandidateController@testFinished')->name('testFinished');
+
+Route::get('/t/v', 'CandidateController@validateDuration')->name('testValidateDuration');
 
 Route::get('/login', 'AuthController@getLogin')->name('getLogin');
 Route::get('/register', 'AuthController@getRegister')->name('getRegister')->middleware('invite_request');
@@ -25,18 +31,21 @@ Route::post('/register', 'AuthController@postRegister')->name('postRegister');
 Route::get('/logout', 'AuthController@logout')->name('logout');
 
 Route::middleware(['redirect_if_not_authenticated'])->group(function () {
-    // Invite issue
-    Route::get('/invite', 'IssueInviteController@show')->name('getIssueInvite');
-    Route::post('/invite', 'IssueInviteController@issue')->name('postIssueInvite');
-    Route::get('/invites/users', 'IssueInviteController@getUserInvites')->name('getUserInvites');
-    Route::post('/invites/revoke', 'IssueInviteController@revoke')->name('revokeInvite');
+    // Tests
+    Route::get('/test/add', 'TestController@getCreate')->name('testGetCreate');
+    Route::post('/test/add', 'TestController@postCreate')->name('testPostCreate');
+    Route::get('/test/{id}/edit', 'TestController@getEdit')->name('testGetEdit');
+    Route::post('/test/{id}/edit', 'TestController@postEdit')->name('testPostEdit');
+    Route::post('/test/{id}/delete', 'TestController@delete')->name('testDelete');
+    Route::get('/tests', 'TestController@all')->name('testAll');
+
 
     Route::get('/me', 'UserController@profile')->name('userProfile');
     // Questions
     Route::get('/question/add', 'QuestionController@create')->name('questionCreate');
     Route::post('/question/add', 'QuestionController@add')->name('questionAdd');
 
-    Route::get('/question/{id}', 'QuestionController@edit')->name('questionEdit');
+    Route::get('/question/{id}/edit', 'QuestionController@edit')->name('questionEdit');
     Route::post('/question/{id}/update', 'QuestionController@update')->name('questionUpdate');
     Route::post('/question/update/image', 'QuestionController@updateImages')->name('questionUpdateImages');
 
@@ -63,8 +72,19 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/chapter/{id}/edit', 'Chaptercontroller@getEdit')->name('chapterGetEdit');
     Route::post('/chapter/{id}/edit', 'ChapterController@postEdit')->name('chapterPostEdit');
     Route::post('/chapter/{id}/delete', 'ChapterController@delete')->name('chapterDelete');
+    Route::post('/chapter/test/associate', 'ChapterController@chapterTestAssociate')->name('chapterTestAssociate');
 
-    // Tests
-    Route::get('/test/add', 'TestController@getCreate')->name('testGetCreate');
-    Route::get('/test/add', 'TestController@postCreate')->name('testPostCreate');
+    // User invite issue
+    Route::get('/invite/user', 'IssueInviteController@show')->name('getIssueInvite');
+    Route::post('/invite/user', 'IssueInviteController@issue')->name('postIssueInvite');
+    Route::get('/invites/users', 'IssueInviteController@getUserInvites')->name('getUserInvites');
+    Route::post('/invites/revoke', 'IssueInviteController@revoke')->name('revokeInvite');
+
+    // Candidate invite issue
+    Route::get('/invite/candidate', 'CandidateInviteController@getCreateInvite')->name('candidateGetCreateInvite');
+    Route::post('/invite/candidate', 'CandidateInviteController@postCreateInvite')->name('candidatePostCreateInvite');
+
+    // Reviews
+    Route::get('/invite/candidate', 'CandidateInviteController@getCreateInvite')->name('candidateGetCreateInvite');
+
 });

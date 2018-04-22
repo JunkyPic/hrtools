@@ -10,7 +10,7 @@ $(document).ready(function() {
             loadingClass: "loading-circle"
         },
         onSelect: function(item) {
-            window.location = 'question/' + item.value;
+            window.location = 'question/' + item.value + '/edit';
         }
     });
 });

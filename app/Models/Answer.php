@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Test extends Model
+class Answer extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'tests';
+    protected $table = 'answers';
 
     /**
      * The attributes that are mass assignable.
@@ -17,20 +17,16 @@ class Test extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
-        'information',
+        'question_title',
+        'question_body',
+        'answer',
+        'is_correct',
+        'comment',
+        'question_id',
     ];
 
     /**
      * @var bool
      */
     public $timestamps = true;
-
-    /**
-     * The users that belong to the role.
-     */
-    public function chapters()
-    {
-        return $this->belongsToMany(Chapter::class, 'chapter_test');
-    }
 }

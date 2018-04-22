@@ -36,7 +36,7 @@ class Chapter extends Model
      */
     public function tests()
     {
-        return $this->belongsToMany(Test::class);
+        return $this->belongsToMany(Test::class, 'chapter_test');
     }
 
     /**
