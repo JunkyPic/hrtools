@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
-use App\Models\CandidateInvite;
+use App\Models\Candidate;
 use App\Models\Question;
 use App\Models\Test;
 use Carbon\Carbon;
@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
  */
 class CandidateController extends Controller
 {
-    public function validateInformation(Request $request, CandidateInvite $candidate_invite_model)
+    public function validateInformation(Request $request, Candidate $candidate_invite_model)
     {
         if ( ! $request->has('t')) {
             return view('front.candidate.error')->with(['token_not_present' => true]);
@@ -63,7 +63,7 @@ class CandidateController extends Controller
         return redirect()->route('preStartTest', ['t' => $request->get('t')]);
     }
 
-    public function preStartTest(Request $request, CandidateInvite $candidate_invite_model, Test $test_model)
+    public function preStartTest(Request $request, Candidate $candidate_invite_model, Test $test_model)
     {
         if ( ! $request->has('t')) {
             return view('front.candidate.error')->with(['token_not_present' => true]);
@@ -128,7 +128,7 @@ class CandidateController extends Controller
         );
     }
 
-    public function postStarTest(Request $request, CandidateInvite $candidate_invite_model, Test $test_model)
+    public function postStarTest(Request $request, Candidate $candidate_invite_model, Test $test_model)
     {
         if ( ! isset($_COOKIE['jsen'])) {
             return view('front.candidate.error')->with(['error' => 'Javascript must be enabled']);
@@ -173,7 +173,7 @@ class CandidateController extends Controller
         try{
             $test_instance = $test_model
                 ->where(['id' => $candidate_invite_model_instance->test_id])
-                ->with('chapters.questions')
+                ->with('chapters.questions.images')
                 ->first();
         }catch (\Exception $exception){
             return view('front.candidate.error')->with(
@@ -194,7 +194,7 @@ class CandidateController extends Controller
         );
     }
 
-    public function postEndTest(Request $request, CandidateInvite $candidate_invite_model, Answer $answer_model, Question $question_model)
+    public function postEndTest(Request $request, Candidate $candidate_invite_model, Answer $answer_model, Question $question_model, Test $test_model)
     {
         try{
             $candidate_invite_model_instance = $candidate_invite_model->where(
@@ -203,6 +203,8 @@ class CandidateController extends Controller
                     'test_id' => $request->get('test_id'),
                 ]
             )->first();
+
+            $test_model_instance = $test_model->where(['id' => $request->get('test_id')])->first();
 
             if (null === $candidate_invite_model_instance) {
                 return view('front.candidate.error')->with([
@@ -245,19 +247,25 @@ class CandidateController extends Controller
                 'is_correct' => null,
                 'comment' => null,
                 'question_id' => $question->id,
+                'test_id' => $test_model_instance->id,
+                'test_name' => $test_model_instance->name,
+                'candidate_id' => $candidate_invite_model_instance->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ];
         }
 
         $answer_model->insert($answers_insert);
+
         $candidate_invite_model_instance->test_finished_at = time();
+        $candidate_invite_model_instance->is_invite_token_valid = false;
+        $candidate_invite_model_instance->is_email_token_valid = false;
         $candidate_invite_model_instance->save();
 
         return redirect()->route('testFinished');
     }
 
-    public function validateDuration(Request $request, CandidateInvite $candidate_invite_model)
+    public function validateDuration(Request $request, Candidate $candidate_invite_model)
     {
         if ( ! $request->has('t')) {
             return new JsonResponse([

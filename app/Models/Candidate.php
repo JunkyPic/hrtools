@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CandidateInvite extends Model
+class Candidate extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'candidate_invite';
+    protected $table = 'candidates';
 
     /**
      * The attributes that are mass assignable.
@@ -35,4 +35,11 @@ class CandidateInvite extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function answers() {
+        return $this->hasMany(Answer::class, 'candidate_id');
+    }
 }

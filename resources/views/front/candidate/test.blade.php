@@ -38,8 +38,17 @@
                     <div class="col-lg-12">
                         <p>{!! $question->body  !!}</p>
                     </div>
-                    <div class="col-lg-12">
-                        <label for="qa_{{ $question->id }}">Answer</label>
+                    @if($question->images->count() >= 1)
+                        @foreach($question->images as $image)
+                            <div class="col-lg-12">
+                                <a href="{{ url(Config::get('image.display_path') . $image->alias)}}" target="_blank"><img class="img-fluid "
+                                     src="{{ url(Config::get('image.display_path') . $image->alias)}}"></a>
+                            </div>
+                        @endforeach
+                    @endif
+                    <div class="col-lg-12 spacing-top-30 text-center">
+                        <hr>
+                        <label for="qa_{{ $question->id }}"><strong>Answer</strong></label>
                         <textarea name="answers[{{ $question->id }}]" class="form-control" style="min-width: 100%" rows="10" id="qa_{{ $question->id }}">test</textarea>
                     </div>
                 </div>

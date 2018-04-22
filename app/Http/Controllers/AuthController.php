@@ -41,7 +41,7 @@ class AuthController extends Controller
     public function postLogin(AuthControllerPostLogin $request) {
         if (\Auth::attempt($request->except('_token')))
         {
-            return redirect()->route('userProfile');
+            return redirect()->route('questionsAll');
         }
 
         return redirect()->back()->withErrors(['message' => 'Something went wrong, try again.', 'alert_type' => 'danger']);
@@ -104,6 +104,6 @@ class AuthController extends Controller
     public function logout(Request $request) {
         \Auth::logout();
         $request->session()->invalidate();
-        return redirect()->route('home');
+        return redirect()->route('getLogin');
     }
 }

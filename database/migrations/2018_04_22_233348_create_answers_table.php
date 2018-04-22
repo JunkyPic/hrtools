@@ -21,6 +21,9 @@ class CreateAnswersTable extends Migration
             $table->tinyInteger('is_correct')->nullable();
             $table->longText('comment')->nullable();
             $table->integer('question_id');
+            $table->integer('test_id');
+            $table->string('test_name');
+            $table->integer('candidate_id');
             $table->timestamps();
         });
     }

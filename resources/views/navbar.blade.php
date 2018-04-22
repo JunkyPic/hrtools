@@ -26,6 +26,8 @@
                     <div class="dropdown-menu" aria-labelledby="chapters">
                         <a class="dropdown-item" href="{{ route('testAll') }}">All</a>
                         <a class="dropdown-item" href="{{ route('testGetCreate') }}">Add</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ route('testTaken') }}">Test results</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -37,18 +39,21 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Invites<span class="caret"></span></a>
-                    <div class="dropdown-menu" aria-labelledby="questions">
+                    <div class="dropdown-menu" aria-labelledby="invites">
                         <a class="dropdown-item" href="{{ route('getIssueInvite') }}">Invite user</a>
                         <a class="dropdown-item" href="{{ route('getUserInvites') }}">User invites</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('candidateGetCreateInvite') }}">Invite candidate</a>
                     </div>
                 </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('userProfile') }}">My Profile</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Profile<span class="caret"></span></a>
+                    <div class="dropdown-menu" aria-labelledby="profile">
+                        <a class="dropdown-item" href="{{ route('userProfile') }}">My Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
+                    </div>
                 </li>
-
             </ul>
         </div>
     </div>

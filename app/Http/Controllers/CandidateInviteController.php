@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CandidateInviteControllerPostCreateInvite;
-use App\Models\CandidateInvite;
+use App\Models\Candidate;
 use App\Models\Test;
 use App\User;
 use Illuminate\Support\Facades\Mail;
@@ -32,11 +32,11 @@ class CandidateInviteController extends Controller
 
     /**
      * @param CandidateInviteControllerPostCreateInvite $request
-     * @param CandidateInvite                           $invite_model
+     * @param Candidate                                 $invite_model
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateInvite(CandidateInviteControllerPostCreateInvite $request, CandidateInvite $invite_model)
+    public function postCreateInvite(CandidateInviteControllerPostCreateInvite $request, Candidate $invite_model)
     {
         $email_token = Str::random(100);
         $test_token = Str::random(100);

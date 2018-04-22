@@ -38,6 +38,8 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/test/{id}/edit', 'TestController@postEdit')->name('testPostEdit');
     Route::post('/test/{id}/delete', 'TestController@delete')->name('testDelete');
     Route::get('/tests', 'TestController@all')->name('testAll');
+    Route::get('/tests/candidates', 'TestController@taken')->name('testTaken');
+    Route::get('/test/candidate/{id}/review', 'TestController@review')->name('testReview');
 
 
     Route::get('/me', 'UserController@profile')->name('userProfile');

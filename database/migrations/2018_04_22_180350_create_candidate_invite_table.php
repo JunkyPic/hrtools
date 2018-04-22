@@ -13,7 +13,7 @@ class CreateCandidateInviteTable extends Migration
      */
     public function up()
     {
-        Schema::create('candidate_invite', function (Blueprint $table) {
+        Schema::create('candidates', function (Blueprint $table) {
             $table->increments('id');
             $table->string('email_token');
             $table->string('test_token');

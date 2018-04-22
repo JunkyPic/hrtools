@@ -23,10 +23,20 @@ class Answer extends Model
         'is_correct',
         'comment',
         'question_id',
+        'test_id',
+        'test_name',
+        'candidate_id',
     ];
 
     /**
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function candidates() {
+        return $this->belongsto(Candidate::class, 'candidate_id');
+    }
 }
