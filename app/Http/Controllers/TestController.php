@@ -132,6 +132,15 @@ class TestController extends Controller
         ]);
     }
 
+    /**
+     * @param               $candidate_id
+     * @param               $test_id
+     * @param CandidateTest $candidate_test_model
+     * @param Review        $review
+     * @param Candidate     $candidate_model
+     *
+     * @return $this
+     */
     public function review($candidate_id, $test_id, CandidateTest $candidate_test_model, Review $review, Candidate $candidate_model) {
         $reviews = $review->where([
             'user_id' => \Auth::user()->id,
@@ -173,6 +182,12 @@ class TestController extends Controller
         ]);
     }
 
+    /**
+     * @param TestControllerPostUpdateReview $request
+     * @param Review                         $review
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function reviewUpdate(TestControllerPostUpdateReview $request, Review $review) {
         $candidate_id = $request->get('candidate_id');
         $candidate_test_id = $request->get('candidate_test_id');
@@ -198,6 +213,12 @@ class TestController extends Controller
         return redirect()->back()->with(['message' => 'Review updated successfully', 'alert_type' => 'success']);
     }
 
+    /**
+     * @param TestControllerPostSubmitReview $request
+     * @param Review                         $review
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function reviewSubmit(TestControllerPostSubmitReview $request, Review $review) {
         $candidate_id = $request->get('candidate_id');
         $candidate_test_id = $request->get('candidate_test_id');

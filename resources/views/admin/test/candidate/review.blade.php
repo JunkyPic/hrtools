@@ -68,7 +68,7 @@
                     <div class="col-lg-12 padding-30 margin-top-10">
                         @if(null !== $answer->answer)
                             <p>Answer given:</p>
-                            <p>{{ $answer->answer }}</p>
+                            <p>{!! nl2br(e( $answer->answer)) !!}</p>
                         @else
                             <p>Question was not answered</p>
                         @endif
