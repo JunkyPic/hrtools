@@ -42,8 +42,8 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/test/{id}/delete', 'TestController@delete')->name('testDelete');
     Route::get('/tests', 'TestController@all')->name('testAll');
     Route::get('/tests/candidates', 'TestController@taken')->name('testTaken');
-    Route::get('/test/candidate/{id}/review', 'TestController@review')->name('testReview');
-
+    Route::get('/candidate/{candidate_id}/test/{test_id}/review', 'TestController@review')->name('testReview');
+    Route::post('/candidate/review/submit', 'TestController@reviewSubmit')->name('reviewSubmit');
 
     Route::get('/me', 'UserController@profile')->name('userProfile');
     // Questions

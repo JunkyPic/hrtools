@@ -13,7 +13,8 @@ class Image extends Model
      * @var array
      */
     protected $fillable = [
-        'alias', 'name',
+        'alias',
+        'name',
     ];
 
     public $timestamps = true;

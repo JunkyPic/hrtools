@@ -38,7 +38,7 @@
                     @else
                         <td>{{ \Carbon\Carbon::createFromTimestamp($candidate->finished_at)->toDateTimeString() }}</td>
                     @endif
-                    <td><a href="{{ route('testReview', ['id' => $candidate->id ]) }}">Review</a></td>
+                    <td><a href="{{ route('testReview', ['candidate_id' => $candidate->candidate_id, 'test_id' => $candidate->id]) }}">Review</a></td>
                 </tr>
             @endforeach
             </tbody>

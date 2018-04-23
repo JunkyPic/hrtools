@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
-use App\Models\Candidate;
+use App\Models\AnswerImage;
 use App\Models\CandidateTest;
 use App\Models\Question;
 use App\Models\Test;
+use App\Repository\ImageRepository;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 /**
  * Class CandidateController
@@ -43,7 +44,7 @@ class CandidateController extends Controller
      */
     public function validateInformation(Request $request, CandidateTest $candidate_test_model)
     {
-        if ( null === $this->token) {
+        if (null === $this->token) {
             return view('front.candidate.error')->with(['token_not_present' => true]);
         }
 
@@ -56,19 +57,22 @@ class CandidateController extends Controller
                 return view('front.candidate.error')->with(['error' => 'Invalid token']);
             }
 
-            if((int) $test_candidate->is_valid !== 1) {
+            if ((int)$test_candidate->is_valid !== 1) {
                 return redirect()->route('testInvalid');
             }
 
             if (null !== $test_candidate->started_at) {
-                if(time() >= $test_candidate->started_at + $test_candidate->validity) {
+                if (time() >= $test_candidate->started_at + $test_candidate->validity) {
                     // test has finished
-                    return view('front.candidate.error')->with([
+                    return view('front.candidate.error')->with(
+                        [
                             'error' => 'Test has finished, hope you did well',
                         ]
                     );
                 }
-                return view('front.candidate.error')->with([
+
+                return view('front.candidate.error')->with(
+                    [
                         'error' => 'Test is already started',
                         'link'  => route('postStartTest', ['t' => $this->token]),
                     ]
@@ -84,9 +88,16 @@ class CandidateController extends Controller
         return redirect()->route('preStartTest', ['t' => $request->get('t')]);
     }
 
+    /**
+     * @param Request       $request
+     * @param CandidateTest $candidate_test_model
+     * @param Test          $test_model
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
     public function preStartTest(Request $request, CandidateTest $candidate_test_model, Test $test_model)
     {
-        if ( null === $this->token) {
+        if (null === $this->token) {
             return view('front.candidate.error')->with(['token_not_present' => true]);
         }
 
@@ -99,20 +110,22 @@ class CandidateController extends Controller
                 return view('front.candidate.error')->with(['error' => 'Invalid token']);
             }
 
-            if((int) $test_candidate->is_valid !== 1) {
+            if ((int)$test_candidate->is_valid !== 1) {
                 return redirect()->route('testInvalid');
             }
 
             if (null !== $test_candidate->started_at) {
-                if(time() >= $test_candidate->started_at + $test_candidate->validity) {
+                if (time() >= $test_candidate->started_at + $test_candidate->validity) {
                     // test has finished
-                    return view('front.candidate.error')->with([
+                    return view('front.candidate.error')->with(
+                        [
                             'error' => 'Test has finished, hope you did well',
                         ]
                     );
                 }
 
-                return view('front.candidate.error')->with([
+                return view('front.candidate.error')->with(
+                    [
                         'error' => 'Test is already started',
                         'link'  => route('postStartTest', ['t' => $this->token]),
                     ]
@@ -137,13 +150,19 @@ class CandidateController extends Controller
         }
     }
 
+    /**
+     * @param CandidateTest $candidate_test_model
+     * @param Test          $test_model
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
     public function postStarTest(CandidateTest $candidate_test_model, Test $test_model)
     {
         if ( ! isset($_COOKIE['jsen'])) {
             return view('front.candidate.error')->with(['error' => 'Javascript must be enabled']);
         }
 
-        if ( null === $this->token) {
+        if (null === $this->token) {
             return view('front.candidate.error')->with(['token_not_present' => true]);
         }
 
@@ -156,25 +175,21 @@ class CandidateController extends Controller
                 return view('front.candidate.error')->with(['error' => 'Invalid token']);
             }
 
-            if((int) $test_candidate->is_valid !== 1) {
+            if ((int)$test_candidate->is_valid !== 1) {
                 return redirect()->route('testInvalid');
             }
 
             if (null !== $test_candidate->started_at) {
-                if(time() >= $test_candidate->started_at + $test_candidate->validity) {
+                if (time() >= $test_candidate->started_at + $test_candidate->validity) {
                     // test has finished
-                    return view('front.candidate.error')->with([
+                    return view('front.candidate.error')->with(
+                        [
                             'error' => 'Test has finished',
                         ]
                     );
                 }
-                return view('front.candidate.error')->with([
-                        'error' => 'Test is already started',
-                        'link'  => route('postStartTest', ['t' => $this->token]),
-                    ]
-                );
             }
-            
+
             $test_instance = $test_model
                 ->where(['id' => $test_candidate->test_id])
                 ->with('chapters.questions.images')
@@ -187,7 +202,7 @@ class CandidateController extends Controller
 
             return view('front.candidate.test')->with(
                 [
-                    'test' => $test_instance,
+                    'test'       => $test_instance,
                     'test_token' => $test_candidate->token,
                 ]
             );
@@ -199,15 +214,31 @@ class CandidateController extends Controller
         }
     }
 
-    public function postEndTest(Request $request, CandidateTest $candidate_test_model, Answer $answer_model, Question $question_model, Test $test_model)
-    {
+    /**
+     * @param Request         $request
+     * @param CandidateTest   $candidate_test_model
+     * @param Question        $question_model
+     * @param Test            $test_model
+     * @param ImageRepository $image_repository
+     * @param Answer          $answer_model
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function postEndTest(
+        Request $request,
+        CandidateTest $candidate_test_model,
+        Question $question_model,
+        Test $test_model,
+        ImageRepository $image_repository,
+        Answer $answer_model
+    ){
         try{
             $test_id = $request->get('test_id');
             $answers = $request->get('answers');
 
             $test_candidate = $candidate_test_model->where(
                 [
-                    'token' => $request->get('test_token'),
+                    'token'   => $request->get('test_token'),
                     'test_id' => $test_id,
                 ]
             )->first();
@@ -218,36 +249,52 @@ class CandidateController extends Controller
                 );
             }
 
-            if((int) $test_candidate->is_valid !== 1) {
+            if ((int)$test_candidate->is_valid !== 1) {
                 return redirect()->route('testInvalid');
             }
 
             $test_model_instance = $test_model->where(['id' => $test_id])->first();
 
-            if(null !== $test_candidate->finished_at) {
+            if (null !== $test_candidate->finished_at) {
                 return redirect()->route('testFinished');
             }
-            $questions = $question_model->whereIn('id', array_keys($answers))->get();
 
-            $answers_insert = [];
+            $questions = $question_model->whereIn('id', array_keys($answers))->with('images')->get();
 
-            foreach($questions as $question) {
-                $answers_insert[] = [
-                    'question_title' => $question->title,
-                    'question_body' => $question->body,
-                    'answer' => null === $answers[$question->id] ? null : $answers[$question->id] ,
-                    'is_correct' => null,
-                    'comment' => null,
-                    'question_id' => $question->id,
-                    'test_id' => $test_model_instance->id,
-                    'test_name' => $test_model_instance->name,
-                    'candidate_id' => $test_candidate->id,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ];
+            $folder_name = Str::random('15');
+            $original_image_path = \Config::get('image.upload_path');
+            $copy_image_path = \Config::get('image.answer_image').$folder_name.DIRECTORY_SEPARATOR;
+
+            foreach ($questions as $question) {
+                $answer_instance = $answer_model->create(
+                    [
+                        'question_title'    => $question->title,
+                        'question_body'     => $question->body,
+                        'answer'            => null === $answers[$question->id] ? null : $answers[$question->id],
+                        'test_name'         => $test_model_instance->name,
+                        'candidate_test_id' => $test_candidate->id,
+                        'created_at'        => Carbon::now(),
+                        'updated_at'        => Carbon::now(),
+                    ]
+                );
+
+                if ($question->images->count() >= 1) {
+                    if ( ! \File::exists($copy_image_path)) {
+                        \File::makeDirectory($copy_image_path, $mode = 0777, true, true);
+                    }
+
+                    foreach ($question->images as $item) {
+                        $answer_instance->images()->create(
+                            [
+                                'alias'  => $item->alias,
+                                'folder' => $folder_name,
+                            ]
+                        );
+
+                        $image_repository->copy($original_image_path.$item->alias, $copy_image_path.$item->alias);
+                    }
+                }
             }
-
-            $answer_model->insert($answers_insert);
 
             $test_candidate->finished_at = time();
             $test_candidate->is_valid = false;
@@ -255,19 +302,27 @@ class CandidateController extends Controller
 
             return redirect()->route('testFinished');
 
-        }catch (\Exception $exception) {
+        }catch (\Exception $exception){
             return view('front.candidate.error')->with(
                 ['error' => 'Something went wrong, contact a system administrator.']
             );
         }
     }
 
+    /**
+     * @param Request       $request
+     * @param CandidateTest $candidate_test_model
+     *
+     * @return JsonResponse
+     */
     public function validateDuration(Request $request, CandidateTest $candidate_test_model)
     {
         if ( ! $request->has('t')) {
-            return new JsonResponse([
-               'status' => 'PARAM_MISSING',
-            ]);
+            return new JsonResponse(
+                [
+                    'status' => 'PARAM_MISSING',
+                ]
+            );
         }
 
         try{
@@ -276,46 +331,68 @@ class CandidateController extends Controller
             )->first();
 
             if (null === $test_candidate) {
-                return new JsonResponse([
-                    'status' => 'TEST_MISSING',
-                ]);
+                return new JsonResponse(
+                    [
+                        'status' => 'TEST_MISSING',
+                    ]
+                );
             }
 
             if (null !== $test_candidate->started_at) {
-                if(time() >= $test_candidate->started_at + $test_candidate->validity) {
+                if (time() >= $test_candidate->started_at + $test_candidate->validity) {
                     // test has finished
-                    return new JsonResponse([
-                        'status' => 'TEST_FINISHED',
-                    ]);
-                } else{
-                    return new JsonResponse([
-                        'status' => 'TEST_ONGOING',
-                    ]);
+                    return new JsonResponse(
+                        [
+                            'status' => 'TEST_FINISHED',
+                        ]
+                    );
+                }else {
+                    return new JsonResponse(
+                        [
+                            'status' => 'TEST_ONGOING',
+                        ]
+                    );
                 }
-            } else {
-                return new JsonResponse([
-                    'status' => 'ARG_MISSING',
-                ]);
+            }else {
+                return new JsonResponse(
+                    [
+                        'status' => 'ARG_MISSING',
+                    ]
+                );
             }
         }catch (\Exception $exception){
-            return new JsonResponse([
-                'status' => 'ERROR',
-            ]);
+            return new JsonResponse(
+                [
+                    'status' => 'ERROR',
+                ]
+            );
             // TODO LOG ERRORS TOO FFS
         }
     }
 
-    public function testFinished() {
-        return view('front.candidate.error')->with([
-            'error' => 'Test finished!',
-            'title' => 'Test done!'
-        ]);
+    /**
+     * @return $this
+     */
+    public function testFinished()
+    {
+        return view('front.candidate.error')->with(
+            [
+                'error' => 'Test finished!',
+                'title' => 'Test done!',
+            ]
+        );
     }
 
-    public function testInvalid() {
-        return view('front.candidate.error')->with([
-            'error' => 'Test is no longer valid',
-            'title' => 'Test invalid'
-        ]);
+    /**
+     * @return $this
+     */
+    public function testInvalid()
+    {
+        return view('front.candidate.error')->with(
+            [
+                'error' => 'Test is no longer valid',
+                'title' => 'Test invalid',
+            ]
+        );
     }
 }

@@ -31,17 +31,15 @@ class CandidateTest extends Model
      */
     public $timestamps = true;
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function answers() {
-        return $this->hasMany(Answer::class, 'candidate_id');
+        return $this->hasMany(Answer::class, 'candidate_test_id');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function candidate() {
         return $this->belongsto(Candidate::class, 'candidate_id');
+    }
+
+    public function reviews() {
+        return $this->hasMany(Review::class, 'candidate_test_id', 'id');
     }
 }

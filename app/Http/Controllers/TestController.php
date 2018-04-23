@@ -4,8 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TestControllerPostCreateTest;
 use App\Http\Requests\TestControllerPostEditTest;
+use App\Http\Requests\TestControllerPostSubmitReview;
+use App\Models\Answer;
+use App\Models\Candidate;
+use App\Models\CandidateQuestionTestImage;
 use App\Models\CandidateTest;
+use App\Models\Review;
 use App\Models\Test;
+use App\User;
+use Illuminate\Http\Request;
 
 /**
  * Class TestController
@@ -46,7 +53,10 @@ class TestController extends Controller
      * @return $this
      */
     public function all(Test $test_model) {
-        return view('admin.test.tests')->with(['tests' => $test_model->with(['chapters.questions'])->orderBy('created_at', 'DESC')->paginate(1)]);
+        return view('admin.test.tests')
+            ->with([
+                'tests' => $test_model->with(['chapters.questions'])->orderBy('created_at', 'DESC')->paginate(1)
+            ]);
     }
 
     /**
@@ -115,11 +125,86 @@ class TestController extends Controller
             ->whereHas('answers')
             ->with('answers', 'candidate')
             ->paginate(20);
-
-        return view('admin.test.candidate.list')->with(['candidate_answers' => $candidate_answers]);
+        return view('admin.test.candidate.list')->with([
+            'candidate_answers' => $candidate_answers
+        ]);
     }
 
-    public function review() {
-        dd('test');
+    public function review($candidate_id, $test_id, CandidateTest $candidate_test_model, Review $review, Candidate $candidate_model) {
+        $reviews = $review->where([
+            'user_id' => \Auth::user()->id,
+            'candidate_test_id' => $test_id,
+            'candidate_id' => $candidate_id
+        ])
+            ->with('answers.images')
+            ->get();
+
+        $candidate = $candidate_model->where(['id' => $candidate_id])->first();
+
+        if($review->count() >= 1) {
+            return view('admin.test.candidate.review')->with([
+                'candidate' => $candidate,
+                'candidate_instance' => $reviews,
+                'candidate_id' => $candidate_id,
+                'test_id' => $test_id,
+                'user_id' => \Auth::user()->id,
+                'image_display_path' => \Config::get('image.answer_image_display')
+            ]);
+        }
+
+        $candidate = $candidate_test_model
+            ->with('answers.images', 'candidate')
+            ->whereHas('candidate', function ($query) use ($candidate_id) {
+                $query->where('candidate_id', '=', $candidate_id);
+            })
+            ->whereHas('answers', function ($query) use ($test_id) {
+                $query->where('candidate_test_id', '=', $test_id);
+            })
+            ->first();
+
+        return view('admin.test.candidate.review')->with([
+            'candidate_instance' => $candidate,
+            'candidate_id' => $candidate_id,
+            'test_id' => $test_id,
+            'user_id' => \Auth::user()->id,
+            'image_display_path' => \Config::get('image.answer_image_display')
+        ]);
+    }
+
+    public function reviewSubmit(TestControllerPostSubmitReview $request, Review $review) {
+        $candidate_id = $request->get('candidate_id');
+        $candidate_test_id = $request->get('candidate_test_id');
+        $is_correct = $request->get('is_correct');
+        $notes = $request->get('notes');
+        $user_id = \Auth::user()->id;
+
+        // Gotta love not being able to mass assign with relation
+        foreach ($is_correct as $key => $item) {
+            switch ($item) {
+                case Review::CORRECT:
+                    $status = Review::CORRECT;
+                    break;
+                case Review::PARTIALLY_CORRECT:
+                    $status = Review::PARTIALLY_CORRECT;
+                    break;
+                case Review::INCORRECT:
+                    $status = Review::INCORRECT;
+                    break;
+                default:
+                    $status = Review::REQUIRES_ADDITIONAL_REVIEW;
+                    break;
+            }
+
+            $review = $review->create([
+                'is_correct' => $status,
+                'notes' => $notes[$key],
+                'answer_id' => $key,
+                'user_id' => $user_id,
+                'candidate_id' => $candidate_id,
+                'candidate_test_id' => $candidate_test_id,
+            ]);
+        }
+
+        return redirect()->back()->with(['message' => 'Review submitted successfully', 'alert_type' => 'success']);
     }
 }

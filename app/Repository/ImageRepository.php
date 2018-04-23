@@ -15,7 +15,6 @@ use App\Models\Image as ImageModel;
  */
 class ImageRepository
 {
-
     /**
      * @var \App\Models\Image
      */
@@ -59,7 +58,6 @@ class ImageRepository
             $img = Image::make($image->getRealPath());
             $images_return[] = $this->mode_instance::create(
                 [
-                    'name'  => null,
                     'alias' => $imageName,
                 ]
             );
@@ -69,6 +67,17 @@ class ImageRepository
         }
 
         return $images_return;
+    }
+
+    /**
+     * @param $image
+     * @param $location
+     *
+     * @return mixed
+     */
+    public function copy($image, $location) {
+        $img = Image::make($image);
+        return $img->save($location, 60);
     }
 
     /**

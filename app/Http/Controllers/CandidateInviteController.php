@@ -40,7 +40,6 @@ class CandidateInviteController extends Controller
      */
     public function postCreateInvite(CandidateInviteControllerPostCreateInvite $request, Candidate $candidate_model)
     {
-        try{
             $test_token = Str::random(100);
             $email = $request->get('to');
             $fullname = $request->get('fullname');
@@ -82,10 +81,6 @@ class CandidateInviteController extends Controller
                     'candidate_id' => $candidate->id,
                 ]
             );
-
-        }catch (\Exception $exception){
-            return redirect()->back()->with(['message' => 'Unable to query database', 'alert_type' => 'danger']);
-        }
 
         Mail::send(
             'mail.issue', // view

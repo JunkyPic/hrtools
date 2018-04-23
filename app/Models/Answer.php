@@ -25,12 +25,8 @@ class Answer extends Model
         'question_title',
         'question_body',
         'answer',
-        'is_correct',
-        'comment',
-        'question_id',
-        'test_id',
         'test_name',
-        'candidate_id',
+        'candidate_test_id',
     ];
 
     /**
@@ -38,10 +34,16 @@ class Answer extends Model
      */
     public $timestamps = true;
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function candidates() {
-        return $this->belongsto(CandidateTest::class, 'candidate_id');
+    public function images() {
+        return $this->hasMany(AnswerImage::class);
     }
+
+    public function candidates() {
+        return $this->belongsTo(CandidateTest::class, 'candidate_test_id');
+    }
+
+    public function reviews() {
+        return $this->hasMany(Review::class, 'answer_id');
+    }
+
 }

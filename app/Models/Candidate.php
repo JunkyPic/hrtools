@@ -33,4 +33,11 @@ class Candidate extends Model
     public function candidateTest() {
         return $this->hasMany(CandidateTest::class, 'candidate_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function reviews() {
+        return $this->hasMany(Review::class, 'candidate_id', 'id');
+    }
 }
