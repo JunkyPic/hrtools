@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TestControllerPostCreateTest;
 use App\Http\Requests\TestControllerPostEditTest;
 use App\Http\Requests\TestControllerPostSubmitReview;
+use App\Http\Requests\TestControllerPostUpdateReview;
 use App\Models\Answer;
 use App\Models\Candidate;
 use App\Models\CandidateQuestionTestImage;
@@ -125,6 +126,7 @@ class TestController extends Controller
             ->whereHas('answers')
             ->with('answers', 'candidate')
             ->paginate(20);
+
         return view('admin.test.candidate.list')->with([
             'candidate_answers' => $candidate_answers
         ]);
@@ -141,10 +143,10 @@ class TestController extends Controller
 
         $candidate = $candidate_model->where(['id' => $candidate_id])->first();
 
-        if($review->count() >= 1) {
-            return view('admin.test.candidate.review')->with([
+        if($reviews->count() >= 1) {
+            return view('admin.test.candidate.user_review')->with([
                 'candidate' => $candidate,
-                'candidate_instance' => $reviews,
+                'reviews' => $reviews,
                 'candidate_id' => $candidate_id,
                 'test_id' => $test_id,
                 'user_id' => \Auth::user()->id,
@@ -163,12 +165,37 @@ class TestController extends Controller
             ->first();
 
         return view('admin.test.candidate.review')->with([
-            'candidate_instance' => $candidate,
+            'candidate' => $candidate,
             'candidate_id' => $candidate_id,
             'test_id' => $test_id,
             'user_id' => \Auth::user()->id,
             'image_display_path' => \Config::get('image.answer_image_display')
         ]);
+    }
+
+    public function reviewUpdate(TestControllerPostUpdateReview $request, Review $review) {
+        $candidate_id = $request->get('candidate_id');
+        $candidate_test_id = $request->get('candidate_test_id');
+        $is_correct = $request->get('is_correct');
+        $notes = $request->get('notes');
+
+        $reviews = $review->where([
+            'user_id' => \Auth::user()->id,
+            'candidate_test_id' => $candidate_test_id,
+            'candidate_id' => $candidate_id
+        ])
+            ->with('answers.images')
+            ->get();
+
+        // Gotta love not being able to mass assign with relation
+        foreach ($reviews as $review) {
+
+            $review->is_correct = $is_correct[$review->id];
+            $review->notes = $notes[$review->id];
+            $review->save();
+        }
+
+        return redirect()->back()->with(['message' => 'Review updated successfully', 'alert_type' => 'success']);
     }
 
     public function reviewSubmit(TestControllerPostSubmitReview $request, Review $review) {

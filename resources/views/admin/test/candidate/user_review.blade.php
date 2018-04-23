@@ -21,16 +21,17 @@
             @endif
         </div>
     </div>
+
     <div class="row">
         <div class="col-lg-12">
-            @if(null !== $candidate->candidate)
-                <p>Candidate name: {{ $candidate->candidate->fullname }}</p>
-                <p>Candidate email: {{ $candidate->candidate->to }}</p>
-                <p>Test started at: {{ \Carbon\Carbon::createFromTimestamp($candidate->started_at)->toDateTimeString()}}</p>
-                <p>Test finished
-                    at: {{ \Carbon\Carbon::createFromTimestamp($candidate->finished_at)->toDateTimeString()}}</p>
-                <p>Test duration: {{ number_format(($candidate->finished_at - $candidate->started_at) / 60, 2) }}
-                    minutes</p>
+            @if(null !== $candidate->candidate))
+            <p>Candidate name: {{ $candidate->candidate->fullname }}</p>
+            <p>Candidate email: {{ $candidate->candidate->to }}</p>
+            <p>Test started at: {{ \Carbon\Carbon::createFromTimestamp($candidate->started_at)->toDateTimeString()}}</p>
+            <p>Test finished
+                at: {{ \Carbon\Carbon::createFromTimestamp($candidate->finished_at)->toDateTimeString()}}</p>
+            <p>Test duration: {{ number_format(($candidate->finished_at - $candidate->started_at) / 60, 2) }}
+                minutes</p>
             @else
                 <p>Candidate name: {{ $candidate->fullname }}</p>
                 <p>Candidate email: {{ $candidate->to }}</p>
@@ -40,25 +41,26 @@
                 <p>Test duration: {{ number_format(($candidate->finished_at - $candidate->started_at) / 60, 2) }}
                     minutes</p>
             @endif
+
         </div>
     </div>
-
-    <form method="POST" action="{{ route('reviewSubmit') }}">
+    <form method="POST" action="{{ route('reviewUpdate') }}">
         @csrf
+
         <input type="hidden" value="{{$test_id}}" name="candidate_test_id">
         <input type="hidden" value="{{$candidate_id}}" name="candidate_id">
 
-        @foreach($candidate->answers as $answer)
-            <div class="form-group">
+        @foreach($reviews as $answer)
+                <div class="form-group">
                 <div class="row question-border padding-30 margin-top-10">
                     <div class="col-lg-12">
-                        <h3>{{ $answer->question_title }}</h3>
+                        <h3>{{ $answer->answers->question_title }}</h3>
                     </div>
                     <div class="col-lg-12">
-                        <p>{!! $answer->question_body  !!}</p>
+                        <p>{!! $answer->answers->question_body  !!}</p>
                     </div>
-                    @if($answer->images->count() >= 1)
-                        @foreach($answer->images as $image)
+                    @if($answer->answers->images->count() >= 1)
+                        @foreach($answer->answers->images as $image)
                             <div class="col-lg-4">
                                 <img class="img-fluid img-thumbnail"
                                      src="{{ url($image_display_path . $image->folder . '/' . $image->alias)}}">
@@ -66,42 +68,56 @@
                         @endforeach
                     @endif
                     <div class="col-lg-12 padding-30 margin-top-10">
-                        @if(null !== $answer->answer)
+                        @if(null !== $answer->answers->answer)
                             <p>Answer given:</p>
-                            <p>{{ $answer->answer }}</p>
+                            <p>{{ $answer->answers->answer }}</p>
                         @else
                             <p>Question was not answered</p>
                         @endif
                     </div>
                     <div class="text-center">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="is_correct[{{$answer->id}}]"
-                                   id="CORRECT_{{$answer->id}}" value="{{ \App\Models\Review::CORRECT }}">
-                            <label class="form-check-label" for="CORRECT_{{$answer->id}}">Correct</label>
+                            <input class="form-check-input" type="radio" name="is_correct[{{$answer->answers->id}}]"
+                                   id="CORRECT_{{$answer->answers->id}}"
+                                    @if($answer->is_correct == \App\Models\Review::CORRECT)
+                                        checked
+                                    @endif
+                                   value="{{ \App\Models\Review::CORRECT }}">
+                            <label class="form-check-label" for="CORRECT_{{$answer->answers->id}}">Correct</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="is_correct[{{$answer->id}}]"
-                                   id="PARTIALLY_CORRECT_{{$answer->id}}" value="{{ \App\Models\Review::PARTIALLY_CORRECT }}">
-                            <label class="form-check-label" for="PARTIALLY_CORRECT_{{$answer->id}}">Partially
+                            <input class="form-check-input" type="radio" name="is_correct[{{$answer->answers->id}}]"
+                                   id="PARTIALLY_CORRECT_{{$answer->answers->id}}"
+                                   @if($answer->is_correct == \App\Models\Review::PARTIALLY_CORRECT)
+                                   checked
+                                   @endif
+                                   value="{{ \App\Models\Review::PARTIALLY_CORRECT }}">
+                            <label class="form-check-label" for="PARTIALLY_CORRECT_{{$answer->answers->id}}">Partially
                                 correct</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="is_correct[{{$answer->id}}]"
-                                   id="INCORRECT_{{$answer->id}}" value="{{ \App\Models\Review::INCORRECT }}">
-                            <label class="form-check-label" for="INCORRECT_{{$answer->id}}">Incorrect</label>
+                            <input class="form-check-input" type="radio" name="is_correct[{{$answer->answers->id}}]"
+                                   @if($answer->is_correct == \App\Models\Review::INCORRECT)
+                                   checked
+                                   @endif
+                                   id="INCORRECT_{{$answer->answers->id}}" value="{{ \App\Models\Review::INCORRECT }}">
+                            <label class="form-check-label" for="INCORRECT_{{$answer->answers->id}}">Incorrect</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="is_correct[{{$answer->id}}]"
-                                   id="REQUIRES_ADDITIONAL_REVIEW_{{$answer->id}}" value="{{ \App\Models\Review::REQUIRES_ADDITIONAL_REVIEW }}">
-                            <label class="form-check-label" for="REQUIRES_ADDITIONAL_REVIEW_{{$answer->id}}">Requires
+                            <input class="form-check-input" type="radio" name="is_correct[{{$answer->answers->id}}]"
+                                   @if($answer->is_correct == \App\Models\Review::REQUIRES_ADDITIONAL_REVIEW)
+                                   checked
+                                   @endif
+                                   id="REQUIRES_ADDITIONAL_REVIEW_{{$answer->answers->id}}" value="{{ \App\Models\Review::REQUIRES_ADDITIONAL_REVIEW }}">
+                            <label class="form-check-label" for="REQUIRES_ADDITIONAL_REVIEW_{{$answer->answers->id}}">Requires
                                 additional review</label>
                         </div>
                     </div>
                     <div class="col-lg-12 spacing-top-30 text-center">
                         <hr>
-                        <label for="note{{$answer->id}}"><strong>Notes</strong></label>
-                        <textarea name="notes[{{ $answer->id }}]" class="form-control" style="min-width: 100%" rows="5"
-                                  id="note{{$answer->id}}"></textarea>
+                        <label for="note{{$answer->answers->id}}"><strong>Notes</strong></label>
+                        <textarea name="notes[{{ $answer->answers->id }}]" class="form-control" style="min-width: 100%" rows="5"
+                                  id="note{{$answer->answers->id}}">{{ $answer->notes }}</textarea>
                     </div>
                 </div>
             </div>

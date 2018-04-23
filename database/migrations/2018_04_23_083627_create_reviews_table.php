@@ -19,6 +19,7 @@ class CreateReviewsTable extends Migration
             $table->integer('answer_id');
             $table->integer('candidate_test_id');
             $table->integer('candidate_id');
+            $table->integer('user_id');
             $table->longText('notes')->nullable();
             $table->timestamps();
         });

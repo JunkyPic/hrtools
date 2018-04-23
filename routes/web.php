@@ -44,6 +44,7 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/tests/candidates', 'TestController@taken')->name('testTaken');
     Route::get('/candidate/{candidate_id}/test/{test_id}/review', 'TestController@review')->name('testReview');
     Route::post('/candidate/review/submit', 'TestController@reviewSubmit')->name('reviewSubmit');
+    Route::post('/candidate/review/update', 'TestController@reviewUpdate')->name('reviewUpdate');
 
     Route::get('/me', 'UserController@profile')->name('userProfile');
     // Questions
