@@ -29,27 +29,17 @@
             </thead>
             <tbody>
             @foreach($candidate_answers as $candidate)
-                @if($candidate->answers->count() >= 1)
-                    <tr class="table-light">
-                        <th scope="row">{{ $candidate->to_fullname }}</th>
-                        <td>{{ $candidate->to_email }}</td>
-                        <td>{{ \Carbon\Carbon::createFromTimestamp($candidate->test_started_at)->toDateTimeString() }}</td>
-                        @if(null === $candidate->test_finished_at)
-                            <td>Not finished</td>
-                        @else
-                            <td>{{ \Carbon\Carbon::createFromTimestamp($candidate->test_finished_at)->toDateTimeString() }}</td>
-                        @endif
-                        <td><a href="{{ route('testReview', ['id' => $candidate->id ]) }}">Review</a></td>
-                    </tr>
-                @else
-                    <tr class="table-light">
-                        <th scope="row">{{ $candidate->to_fullname }}</th>
-                        <td>{{ $candidate->to_email }}</td>
-                        <td>No info</td>
-                        <td>No info</td>
-                        <td>N/A</td>
-                    </tr>
-                @endif
+                <tr class="table-light">
+                    <th scope="row">{{ $candidate->candidate->fullname }}</th>
+                    <td>{{ $candidate->candidate->to }}</td>
+                    <td>{{ \Carbon\Carbon::createFromTimestamp($candidate->started_at)->toDateTimeString() }}</td>
+                    @if(null === $candidate->finished_at)
+                        <td>Not finished</td>
+                    @else
+                        <td>{{ \Carbon\Carbon::createFromTimestamp($candidate->finished_at)->toDateTimeString() }}</td>
+                    @endif
+                    <td><a href="{{ route('testReview', ['id' => $candidate->id ]) }}">Review</a></td>
+                </tr>
             @endforeach
             </tbody>
         </table>

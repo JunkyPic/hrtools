@@ -24,49 +24,68 @@ class CandidateInviteController extends Controller
      */
     public function getCreateInvite(User $user_model, Test $test_model)
     {
-        return view('admin.invite.candidate.issue_invite')->with([
-            'user' => $user_model->find(\Auth::id())->first(),
-            'tests' => $test_model->get(),
-        ]);
+        return view('admin.invite.candidate.issue_invite')->with(
+            [
+                'user'  => $user_model->find(\Auth::id())->first(),
+                'tests' => $test_model->get(),
+            ]
+        );
     }
 
     /**
      * @param CandidateInviteControllerPostCreateInvite $request
-     * @param Candidate                                 $invite_model
+     * @param Candidate                                 $candidate_model
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateInvite(CandidateInviteControllerPostCreateInvite $request, Candidate $invite_model)
+    public function postCreateInvite(CandidateInviteControllerPostCreateInvite $request, Candidate $candidate_model)
     {
-        $email_token = Str::random(100);
-        $test_token = Str::random(100);
+        try{
+            $test_token = Str::random(100);
+            $email = $request->get('to');
+            $fullname = $request->get('fullname');
 
-        $current_invite = $invite_model->where([
-            'to_email' => $request->get('to'),
-            'is_email_token_valid' => true,
-            'is_invite_token_valid' => true,
-        ])->first();
+            // check if that email is already registered to a candidate
+            $candidate = $candidate_model->where('to', $email)->first();
+            if (null !== $candidate) {
+                // Email already exists
+                // Simply create a new entry in the CandidateTest table and invalidate the previous one
+                $candidate_invite = $candidate->candidateTest()->get();
 
-        if (null !== $current_invite && $current_invite->count() >= 1) {
-            $current_invite->is_email_token_valid = false;
-            $current_invite->is_invite_token_valid = false;
-            $current_invite->save();
+                // Unfortunately Laravel doesn't offer mass assignment via relationship
+                // So they have to be done one by one
+                foreach ($candidate_invite as $item) {
+                    $item->is_valid = false;
+                    $item->save();
+                }
+            }else {
+                // Create a new CandidateTest instance
+                $candidate = $candidate_model->create(
+                    [
+                        'to'       => $email,
+                        'fullname' => $fullname,
+                        'from'     => \Auth::user()->email,
+                        'test_id'  => $request->get('test_id'),
+                    ]
+                );
+            }
+
+            // Create a new instance of the newly updated candidate test
+            $candidate->candidateTest()->create(
+                [
+                    'token'        => $test_token,
+                    'is_valid'     => true,
+                    'validity'     => $request->get('test_validity'),
+                    'started_at'   => null,
+                    'finished_at'  => null,
+                    'test_id'      => $request->get('test_id'),
+                    'candidate_id' => $candidate->id,
+                ]
+            );
+
+        }catch (\Exception $exception){
+            return redirect()->back()->with(['message' => 'Unable to query database', 'alert_type' => 'danger']);
         }
-
-        $invite_model->create(
-            [
-                'email_token'           => $email_token,
-                'test_id'               => $request->get('test_id'),
-                'test_token'            => $test_token,
-                'to_email'              => $request->get('to'),
-                'to_fullname'           => $request->get('to_fullname'),
-                'from'                  => \Auth::user()->email,
-                'test_validity'         => $request->get('test_validity'),
-                'invite_validity'       => $request->get('invite_validity'),
-                'is_email_token_valid'  => true,
-                'is_invite_token_valid' => true,
-            ]
-        );
 
         Mail::send(
             'mail.issue', // view

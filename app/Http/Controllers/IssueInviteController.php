@@ -77,12 +77,13 @@ class IssueInviteController extends Controller
      */
     public function invalidToken(Request $request, Invite $invite) {
         if(!$request->has('token')){
-            abort(404);
+            return view('responses.invalid_invite');
         }
 
         $valid = $invite->where('token', $request->get('token'))->first();
+
         if(null === $valid){
-            abort(404);
+            return view('responses.invalid_invite');
         }
 
         return view('responses.invalid_invite');

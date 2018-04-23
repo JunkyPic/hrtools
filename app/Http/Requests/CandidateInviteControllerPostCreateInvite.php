@@ -25,10 +25,9 @@ class CandidateInviteControllerPostCreateInvite extends FormRequest
     {
         return [
             'to' => 'required|string|email',
-            'to_fullname' => 'required|string',
+            'fullname' => 'required|string',
             'subject' => 'required|string',
             'message' => 'required|string',
-            'invite_validity' => 'required|integer',
             'test_validity' => 'required|integer',
             'test_id' => 'required|integer',
         ];
@@ -43,8 +42,6 @@ class CandidateInviteControllerPostCreateInvite extends FormRequest
             'to.email' => 'The email is invalid',
             'subject.required' => 'The subject field is required',
             'message.required' => 'The body field is required',
-            'invite_validity.required' => 'The email invite validity field is required',
-            'invite_validity.integer' => 'The email invite validity field must be an integer...stop messing with the form smartass',
             'test_validity.required' => 'The test validity field is required',
             'test_id.required' => 'The test validity field is required',
             'test_validity.integer' => 'The test validity field must be an integer...stop messing with the form smartass',

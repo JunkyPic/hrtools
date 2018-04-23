@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Answer extends Model
 {
+    const CORRECT = 1;
+    const PARTIALLY_CORRECT = 0;
+    const INCORRECT = -1;
+    const REQUIRES_ADDITIONAL_REVIEW = 2;
+
     /**
      * @var string
      */
@@ -37,6 +42,6 @@ class Answer extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function candidates() {
-        return $this->belongsto(Candidate::class, 'candidate_id');
+        return $this->belongsto(CandidateTest::class, 'candidate_id');
     }
 }

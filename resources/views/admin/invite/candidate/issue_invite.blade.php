@@ -56,13 +56,13 @@
                         <label for="to" class="col-sm-2 col-form-label text-md-right">{{ __('Candidate name') }}</label>
 
                         <div class="col-md-10">
-                            <input id="to_fullname" type="text"
+                            <input id="fullname" type="text"
                                    class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}"
-                                   name="to_fullname"
-                                   value="{{ old('to_fullname') }}" required autofocus placeholder="John/Jane Doe">
-                            @if ($errors->has('to_fullname'))
+                                   name="fullname"
+                                   value="{{ old('fullname') }}" required autofocus placeholder="John/Jane Doe">
+                            @if ($errors->has('fullname'))
                                 <span class="invalid-feedback">
-                                <strong>{{ $errors->first('to_fullname') }}</strong>
+                                <strong>{{ $errors->first('fullname') }}</strong>
                             </span>
                             @endif
                         </div>
@@ -131,24 +131,6 @@
                             @if ($errors->has('test_validity'))
                                 <span class="invalid-feedback">
                                 <strong>{{ $errors->first('test_validity') }}</strong>
-                            </span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="invite_validity"
-                               class="col-md-2 col-form-label text-md-right">{{ __('Email invite validity') }}</label>
-                        <div class="col-md-10">
-                            <select name="invite_validity" class="form-control" id="invite_validity">
-                                <option value="86400">1 day</option>
-                                <option value="259200" selected>3 days</option>
-                                <option value="432000">5 days</option>
-                                <option value="604800">1 week</option>
-                            </select>
-                            @if ($errors->has('invite_validity'))
-                                <span class="invalid-feedback">
-                                <strong>{{ $errors->first('invite_validity') }}</strong>
                             </span>
                             @endif
                         </div>

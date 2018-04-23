@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TestControllerPostCreateTest;
 use App\Http\Requests\TestControllerPostEditTest;
-use App\Models\Answer;
-use App\Models\Candidate;
+use App\Models\CandidateTest;
 use App\Models\Test;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class TestController
@@ -108,8 +105,15 @@ class TestController extends Controller
         return redirect()->route('testAll')->with(['message' => 'Test deleted successfully', 'alert_type' => 'success']);
     }
 
-    public function taken(Candidate $candidate_model) {
-        $candidate_answers = $candidate_model->with('answers')
+    /**
+     * @param CandidateTest $candidate_test
+     *
+     * @return $this
+     */
+    public function taken(CandidateTest $candidate_test) {
+        $candidate_answers = $candidate_test
+            ->whereHas('answers')
+            ->with('answers', 'candidate')
             ->paginate(20);
 
         return view('admin.test.candidate.list')->with(['candidate_answers' => $candidate_answers]);

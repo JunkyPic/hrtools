@@ -17,18 +17,9 @@ class Candidate extends Model
      * @var array
      */
     protected $fillable = [
-        'email_token',
-        'test_token',
-        'to_email',
-        'to_fullname',
+        'to',
+        'fullname',
         'from',
-        'test_id',
-        'test_validity',
-        'invite_validity',
-        'is_email_token_valid',
-        'is_invite_token_valid',
-        'test_started_at',
-        'test_finished_at',
     ];
 
     /**
@@ -39,7 +30,7 @@ class Candidate extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function answers() {
-        return $this->hasMany(Answer::class, 'candidate_id');
+    public function candidateTest() {
+        return $this->hasMany(CandidateTest::class, 'candidate_id');
     }
 }

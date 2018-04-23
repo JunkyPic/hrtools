@@ -49,7 +49,7 @@
                     <div class="col-lg-12 spacing-top-30 text-center">
                         <hr>
                         <label for="qa_{{ $question->id }}"><strong>Answer</strong></label>
-                        <textarea name="answers[{{ $question->id }}]" class="form-control" style="min-width: 100%" rows="10" id="qa_{{ $question->id }}">test</textarea>
+                        <textarea name="answers[{{ $question->id }}]" class="form-control" style="min-width: 100%" rows="10" id="qa_{{ $question->id }}"></textarea>
                     </div>
                 </div>
             @endforeach

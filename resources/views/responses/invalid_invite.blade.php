@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="container">
-    <div class="jumbotron">
+    <div class="jumbotron text-center">
         <h1 class="display-3 text-center">Invalid token</h1>
         <p class="lead">Whoops, it looks like the token is invalid or it has expired. </p>
     </div>

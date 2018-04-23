@@ -12,7 +12,7 @@
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-10 offset-md-2">
-            <p>Hello {{ $candidate_name }},</p>
+            <p>Hello,</p>
             <p>You are about to take the {{ $test_name }} test.</p>
             <p>Allowed time: {{ $test_total_time }} minutes.</p>
             <p>Please read the following instructions carefully and make sure you understand them</p>

@@ -29,7 +29,8 @@ class AuthController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getLogin() {
+    public function getLogin()
+    {
         return view('auth.login');
     }
 
@@ -38,13 +39,15 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postLogin(AuthControllerPostLogin $request) {
-        if (\Auth::attempt($request->except('_token')))
-        {
+    public function postLogin(AuthControllerPostLogin $request)
+    {
+        if (\Auth::attempt($request->except('_token'))) {
             return redirect()->route('questionsAll');
         }
 
-        return redirect()->back()->withErrors(['message' => 'Something went wrong, try again.', 'alert_type' => 'danger']);
+        return redirect()->back()->withErrors(
+            ['message' => 'Something went wrong, try again.', 'alert_type' => 'danger']
+        );
     }
 
     /**
@@ -53,14 +56,16 @@ class AuthController extends Controller
      *
      * @return $this
      */
-    public function getRegister(Request $request, Invite $invite) {
-        if(!$request->query->has('token')){
-            abort(404);
+    public function getRegister(Request $request, Invite $invite)
+    {
+        if ( ! $request->query->has('token')) {
+            return view('responses.invalid_invite');
         }
 
         $token = $invite->where(['token' => $request->query->get('token'), 'is_valid' => true])->first();
-        if(null === $token) {
-            abort(404);
+
+        if (null === $token) {
+            return view('responses.invalid_invite');
         }
 
         return view('auth.register')->with(['token' => $token]);
@@ -72,24 +77,34 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postRegister(AuthControllerPostRegister $request, Invite $invite) {
-        if(!$request->request->has('token')){
-            abort(404);
+    public function postRegister(AuthControllerPostRegister $request, Invite $invite)
+    {
+        if ( ! $request->request->has('token')) {
+            return view('responses.invalid_invite');
         }
 
         $token = $invite->where(['token' => $request->request->get('token'), 'is_valid' => true])->first();
 
-        if(null === $token) {
+        if (null === $token) {
             abort(404);
         }
 
-        User::create([
-            'username' => $request->get('username'),
-            'email' => $token->to,
-            'password' => \Hash::make($request->get('password')),
-        ]);
-        if (\Auth::attempt([
-            'email' => $token->to, 'password' => $request->get('password')])) {
+        $token->is_valid = false;
+        $token->save();
+
+        User::create(
+            [
+                'username' => $request->get('username'),
+                'email'    => $token->to,
+                'password' => \Hash::make($request->get('password')),
+            ]
+        );
+        if (\Auth::attempt(
+            [
+                'email' => $token->to,
+                'password' => $request->get('password'),
+            ]
+        )) {
             return redirect()->route('userProfile');
         }
 
@@ -101,9 +116,11 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         \Auth::logout();
         $request->session()->invalidate();
+
         return redirect()->route('getLogin');
     }
 }

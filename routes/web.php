@@ -19,14 +19,17 @@ Route::get('/t', 'CandidateController@preStartTest')->name('preStartTest');
 Route::get('/t/s', 'CandidateController@postStarTest')->name('postStartTest');
 Route::post('/t/e', 'CandidateController@postEndTest')->name('postEndTest');
 Route::get('/t/d', 'CandidateController@testFinished')->name('testFinished');
+Route::get('/t/i', 'CandidateController@testInvalid')->name('testInvalid');
 
 Route::get('/t/v', 'CandidateController@validateDuration')->name('testValidateDuration');
 
 Route::get('/login', 'AuthController@getLogin')->name('getLogin');
-Route::get('/register', 'AuthController@getRegister')->name('getRegister')->middleware('invite_request');
-
 Route::post('/login', 'AuthController@postLogin')->name('postLogin');
-Route::post('/register', 'AuthController@postRegister')->name('postRegister');
+
+Route::middleware(['guest', 'invite_request'])->group(function () {
+    Route::get('/register', 'AuthController@getRegister')->name('getRegister');
+    Route::post('/register', 'AuthController@postRegister')->name('postRegister');
+});
 
 Route::get('/logout', 'AuthController@logout')->name('logout');
 

@@ -116,25 +116,38 @@
 
                 <div class="spacing-top row">
                     <div class="col-md-1">
-                        <p>Tags</p>
+                        <p>Tags </p>
                     </div>
-                    @foreach($question->tags as $tag)
-                        <div class="col-md-2 text-center">
-                            <a href="{{ route('questionsTaggedWith', ['tag' => $tag->tag]) }}"><span
-                                        class="badge badge-primary">{{ $tag->tag }}</span></a>
-                        </div>
-                    @endforeach
+                    <ul class="list-inline">
+                        @if($question->tags->count() >= 1)
+                            @foreach($question->tags as $tag)
+                                <li class="list-inline-item">
+                                    <a href="{{ route('questionsTaggedWith', ['tag' => $tag->tag]) }}"><span
+                                                class="badge badge-primary">{{ $tag->tag }}</span></a>
+                                </li>
+                            @endforeach
+                        @else
+                            <li class="list-inline-item">No tags</li>
+                        @endif
+                    </ul>
                 </div>
 
                 <div class="spacing-top row">
                     <div class="col-md-1">
                         <p>Chapters</p>
                     </div>
-                    @foreach($question->chapters as $chapter)
-                        <div class="col-md-2 text-center">
-                            <a href="{{ route('questionsByChapters', ['chapter' => $chapter->chapter]) }}"><span class="badge badge-primary">{{ $chapter->chapter }}</span></a>
-                        </div>
-                    @endforeach
+                    <ul class="list-inline">
+
+                    @if($question->chapters->count() >= 1)
+                        @foreach($question->chapters as $chapter)
+                            <li class="list-inline-item">
+                                <a href="{{ route('questionsByChapters', ['chapter' => $chapter->chapter]) }}"><span class="badge badge-primary">{{ $chapter->chapter }}</span></a>
+                            </li>
+                        @endforeach
+                    @else
+                        <li class="list-inline-item">Not in chapter(s)</li>
+                    @endif
+                    </ul>
                 </div>
 
 
