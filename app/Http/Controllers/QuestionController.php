@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\QuestionControllerPostCreateQuestion;
 use App\Http\Requests\QuestionControllerPostEditQuestion;
+use App\Mapping\Roles;
 use App\Models\Chapter;
 use App\Models\Question;
 use App\Models\Tag;
@@ -31,6 +32,16 @@ class QuestionController extends Controller
      */
     public function questionChapterAssociate(Request $request, Chapter $chapter_model)
     {
+        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'You are not authorized to perform that action',
+                ]
+            );
+        }
+
         if ( ! $request->has('qid') || ! $request->has('chapter_id') || ! $request->has('type')) {
             return new JsonResponse(
                 [
@@ -253,6 +264,12 @@ class QuestionController extends Controller
      */
     public function delete($question_id, Question $question, ImageRepository $image_repository)
     {
+        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+            return redirect()->back()->with(
+                ['message' => 'You are not authorized to perform that action', 'alert_type' => 'danger']
+            );
+        }
+
         $question = $question->find($question_id);
 
         if (null === $question) {
@@ -284,6 +301,16 @@ class QuestionController extends Controller
      */
     public function updateImages(Request $request, Question $question, ImageRepository $image_repository)
     {
+        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'You are not authorized to perform that action',
+                ]
+            );
+        }
+
         if ( ! $request->has('qid')) {
             return new JsonResponse(
                 [
@@ -346,6 +373,16 @@ class QuestionController extends Controller
      */
     public function manageTag(Request $request, Question $question)
     {
+        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'status'  => 500,
+                    'message' => 'You are not authorized to perform that action',
+                ]
+            );
+        }
+
         if ( ! $request->has('qid')) {
             return new JsonResponse(
                 [
@@ -406,6 +443,12 @@ class QuestionController extends Controller
         Question $question,
         ImageRepository $image_repository
     ){
+        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+            return redirect()->back()->with(
+                ['message' => 'You are not authorized to perform that action', 'alert_type' => 'danger']
+            );
+        }
+
         if ($request->files->has('images')) {
             $images = $image_repository->store($request->files->get('images'));
             $image_ids = [];

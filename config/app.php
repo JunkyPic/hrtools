@@ -149,6 +149,7 @@ return [
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
         /*
          * Package Service Providers...
          */

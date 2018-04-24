@@ -2,18 +2,17 @@
 
 namespace App\Http\Requests;
 
+use App\Mapping\Roles;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TestControllerPostUpdateReview extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
      * @return bool
      */
     public function authorize()
     {
-        return true;
+        return \Auth::user()->hasAnyRole([Roles::ROLE_REVIEWER, Roles::ROLE_ADMIN]);
     }
 
     /**

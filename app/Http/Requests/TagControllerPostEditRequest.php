@@ -2,19 +2,18 @@
 
 namespace App\Http\Requests;
 
+use App\Mapping\Roles;
 use App\Models\Tag;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TagControllerPostEditRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
      * @return bool
      */
     public function authorize()
     {
-        return true; // TODO add gate here
+        return \Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN]);
     }
 
     /**

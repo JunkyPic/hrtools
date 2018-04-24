@@ -22,16 +22,7 @@
             </div>
         </div>
 
-        <div class="row justify-content-center">
-            <div class="col-md-12 spacing-top text-center">
-                @if(session('message'))
-                    <div class="alert alert-dismissible alert-success">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>{{ session('message') }}</strong>
-                    </div>
-                @endif
-            </div>
-        </div>
+        @include('includes.message')
         <div class="row justify-content-center">
             <div class="col-md-12 spacing-top">
                 <form method="POST" action="{{ route('candidatePostCreateInvite') }}" id="form_submit">

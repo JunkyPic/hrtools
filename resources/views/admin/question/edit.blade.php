@@ -13,14 +13,6 @@
     </div>
     @include('includes.message')
 
-    <div class="row justify-content-center hide" id="message_display">
-        <div class="col-md-10 offset-2 text-center">
-            <div class="alert alert-info">
-                <strong id="message_output"></strong>
-            </div>
-        </div>
-    </div>
-
     <div class="row justify-content-center">
         <div class="col-md-12 spacing-top">
             <form method="POST" action="{{ route('questionUpdate', ['id' => $question->id]) }}"

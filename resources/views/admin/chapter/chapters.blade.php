@@ -10,13 +10,6 @@
     <div class="spacing-top">
     </div>
     @include('includes.message')
-    <div class="row justify-content-center hide" id="message_display">
-        <div class="col-md-12 text-center">
-            <div class="alert alert-info">
-                <strong id="message_output"></strong>
-            </div>
-        </div>
-    </div>
     @if($chapters->count() == 0)
         <div class="col-lg-12 ">
             <h2 class="display-5 text-muted  text-center">No chapters found, <a href="{{ route('chapterGetCreate') }}">add

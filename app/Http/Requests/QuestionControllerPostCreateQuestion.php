@@ -2,18 +2,17 @@
 
 namespace App\Http\Requests;
 
+use App\Mapping\Roles;
 use Illuminate\Foundation\Http\FormRequest;
 
 class QuestionControllerPostCreateQuestion extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
      * @return bool
      */
     public function authorize()
     {
-        return true; // @TODO use a gate at some point for now granted is fine
+        return \Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN]);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -27,13 +28,14 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Report or log an exception.
+     * @param Exception $exception
      *
-     * @param  \Exception  $exception
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse|mixed
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
+
         parent::report($exception);
     }
 
@@ -46,6 +48,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof AuthorizationException ) {
+            return redirect()->back()->with(['message' => 'You are not authorized to perform that action', 'alert_type' => 'danger']);
+        }
+
         return parent::render($request, $exception);
     }
 }

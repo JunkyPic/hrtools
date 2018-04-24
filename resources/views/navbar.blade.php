@@ -46,18 +46,27 @@
                         <a class="dropdown-item" href="{{ route('candidateGetCreateInvite') }}">Invite candidate</a>
                     </div>
                 </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Editable areas<span class="caret"></span></a>
+                    <div class="dropdown-menu" aria-labelledby="profile">
+                        <a class="dropdown-item" href="{{ route('getEditAreaTestList') }}">Prestart test</a>
+                    </div>
+                </li>
+                @role('admin')
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Roles<span class="caret"></span></a>
+                        <div class="dropdown-menu" aria-labelledby="profile">
+                            <a class="dropdown-item" href="{{ route('getUserByRoles') }}">Users by roles</a>
+                        </div>
+                    </li>
+                @endrole
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Profile<span class="caret"></span></a>
                     <div class="dropdown-menu" aria-labelledby="profile">
                         <a class="dropdown-item" href="{{ route('userProfile') }}">My Profile</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Editable areas<span class="caret"></span></a>
-                    <div class="dropdown-menu" aria-labelledby="profile">
-                        <a class="dropdown-item" href="{{ route('getEditAreaTestList') }}">Prestart test</a>
                     </div>
                 </li>
             </ul>

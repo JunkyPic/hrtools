@@ -8,3 +8,11 @@
         @endif
     </div>
 </div>
+
+<div class="row justify-content-center hide" id="message_display">
+    <div class="col-md-12 text-center">
+        <div class="alert alert-info">
+            <strong id="message_output"></strong>
+        </div>
+    </div>
+</div>

@@ -99,4 +99,9 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/editable/{test_id}/prestarttest', 'EditableAreasController@getEditAreaPrestartTest')->name('getEditAreaPrestartTest');
     Route::post('/editable/{test_id}/prestarttest', 'EditableAreasController@postEditAreaPrestartTest')->name('postEditAreaPrestartTest');
 
+    // Roles
+    Route::get('/roles/users', 'RolesController@getUserByRoles')->name('getUserByRoles');
+    Route::post('/roles/user/assign', 'RolesController@assignRole')->name('assignRole');
+    Route::post('/roles/user/revoke', 'RolesController@revokeRole')->name('revokeRole');
+
 });
