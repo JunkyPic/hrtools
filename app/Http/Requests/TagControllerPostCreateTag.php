@@ -23,7 +23,7 @@ class TagControllerPostCreateTag extends FormRequest
      */
     public function rules()
     {
-        $rules['tag'] = 'required|max:10|string';
+        $rules['tag'] = 'required|max:30|string';
         return $rules;
     }
 
@@ -33,7 +33,7 @@ class TagControllerPostCreateTag extends FormRequest
     public function messages() {
         return [
             'tag.required' => 'The tag name is required',
-            'tag.max' => 'The tag must be at most 10 characters long',
+            'tag.max' => 'The tag must be at most 30 characters long',
         ];
     }
 }
