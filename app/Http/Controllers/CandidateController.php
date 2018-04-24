@@ -142,6 +142,7 @@ class CandidateController extends Controller
             if(null !== $editable_area) {
               return view('front.candidate.pre_start_test')->with(
                 [
+                  'test_total_time' => $test_total_time,
                   'test_name'       => $test_instance->name,
                   'editable_area'  => $editable_area,
                   't'               => $request->get('t'),

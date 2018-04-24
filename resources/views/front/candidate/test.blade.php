@@ -114,25 +114,23 @@
 
 		setInterval(function(){validate(route);}, 10000);
 
-		if(null ===  window.localStorage.getItem("start_time_{{$test_token}}")) {
-			window.localStorage.setItem("start_time_{{$test_token}}", "{{$start_time}}");
+		if(null ===  window.localStorage.getItem("{$test_token}}")) {
+			window.localStorage.setItem("{{$test_token}}", "{{$start_time}}");
 			var start_time = "{{$start_time}}";
 		} else {
-			var start_time = window.localStorage.getItem("start_time_{{$test_token}}");
+			var start_time = window.localStorage.getItem("{{$test_token}}");
 		}
 
 		start_time = new Date(start_time * 1000);
-
 		var x = setInterval(function() {
 			var now = new Date().getTime();
-
 			var distance = start_time - now;
 			var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
 			if(minutes <= 10) {
-
+                // add some sort of warning
             }
 
 			if(hours === 0) {
