@@ -142,7 +142,6 @@ class CandidateController extends Controller
             if(null !== $editable_area) {
               return view('front.candidate.pre_start_test')->with(
                 [
-                  'test_total_time' => $test_total_time,
                   'test_name'       => $test_instance->name,
                   'editable_area'  => $editable_area,
                   't'               => $request->get('t'),
@@ -205,6 +204,8 @@ class CandidateController extends Controller
                 }
             }
 
+            $start_time = Carbon::now()->addSeconds($test_candidate->validity)->timestamp;
+
             $test_instance = $test_model
                 ->where(['id' => $test_candidate->test_id])
                 ->with('chapters.questions.images')
@@ -217,8 +218,9 @@ class CandidateController extends Controller
 
             return view('front.candidate.test')->with(
                 [
-                    'test'       => $test_instance,
-                    'test_token' => $test_candidate->token,
+                    'test'            => $test_instance,
+                    'start_time'      => $start_time,
+                    'test_token'      => $test_candidate->token,
                 ]
             );
 

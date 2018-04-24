@@ -27,6 +27,7 @@
 
 <script type="text/javascript" src="{{ URL::asset('js/jquery.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/jquery-countdown.min.js') }}"></script>
 @yield('scripts')
 </body>
 </html>

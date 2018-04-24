@@ -84,6 +84,12 @@
         <input type="hidden" name="test_token" value="{{ $test_token }}">
         <input type="hidden" id="route" value="{{ route('testValidateDuration', ['t' => $test_token]) }}">
     </form>
+
+    <div class="container-fluid">
+        <footer class="fixed-bottom bg-light">
+            <p class="text-center"><span id="timer-countdown"></span></p>
+        </footer>
+    </div>
 @endsection
 
 @section('scripts')
@@ -107,5 +113,39 @@
 		var route = $('#route').val();
 
 		setInterval(function(){validate(route);}, 10000);
+
+		if(null ===  window.localStorage.getItem("start_time_{{$test_token}}")) {
+			window.localStorage.setItem("start_time_{{$test_token}}", "{{$start_time}}");
+			var start_time = "{{$start_time}}";
+		} else {
+			var start_time = window.localStorage.getItem("start_time_{{$test_token}}");
+		}
+
+		start_time = new Date(start_time * 1000);
+
+		var x = setInterval(function() {
+			var now = new Date().getTime();
+
+			var distance = start_time - now;
+			var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+			if(minutes <= 10) {
+
+            }
+
+			if(hours === 0) {
+				document.getElementById("timer-countdown").innerHTML =  "Time left " + minutes + "m " + seconds + "s ";
+			} else {
+				document.getElementById("timer-countdown").innerHTML =  "Time left " + hours + "h " + minutes + "m " + seconds + "s ";
+			}
+
+			if (distance < 0) {
+				clearInterval(x);
+				document.getElementById("timer-countdown").innerHTML = "EXPIRED";
+			}
+		}, 1000);
+
     </script>
 @endsection

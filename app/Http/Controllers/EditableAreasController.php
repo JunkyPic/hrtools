@@ -14,6 +14,11 @@ use App\Models\Test;
 class EditableAreasController extends Controller
 {
 
+  /**
+   * @param \App\Models\Test $test
+   *
+   * @return $this
+   */
   public function getEditAreaTestList(Test $test) {
     $tests = $test->with('editableArea')->paginate(10);
 

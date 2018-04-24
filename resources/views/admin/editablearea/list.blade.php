@@ -29,10 +29,10 @@
                         </div>
                     </div>
                 @endif
-                @if($test->editableArea->count() == 0)
+                @if(null === $test->editableArea)
                     <div class="spacing-top row">
                         <div class="col-md-12">
-                            <p>Editable areas are empty</p>
+                            <p>No content found for editable area</p>
                         </div>
                     </div>
                 @else
