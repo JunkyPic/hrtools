@@ -1,20 +1,14 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="{{ URL::asset('css/cosmo.min.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('css/test-css.css') }}" rel="stylesheet">
-    <title>{{$test->name}}</title>
-</head>
-<body>
-<script type="text/javascript" src="{{ URL::asset('js/jquery.min.js') }}"></script>
-<script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
+@extends('front.base')
 
-<div class="container padding-40">
+@section('title')
+    {{$test->name}}
+@endsection
+
+@section('meta')
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
+@endsection
+
+@section('content')
     <div class="row text-center">
         <div class="col-lg-12">
             <h1>{{$test->name}}</h1>
@@ -90,27 +84,28 @@
         <input type="hidden" name="test_token" value="{{ $test_token }}">
         <input type="hidden" id="route" value="{{ route('testValidateDuration', ['t' => $test_token]) }}">
     </form>
-</div>
-<script type="text/javascript">
-    function validate(route) {
-        $.ajax({
-            url: route,
-            cache: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data){
-                if(data.hasOwnProperty('status') && data.status === 'TEST_FINISHED') {
-                    $('#form-submit').submit();
-                    $('#form-submit').remove();
-                }
-            }
-        });
-    }
+@endsection
 
-    var route = $('#route').val();
+@section('scripts')
+    <script type="text/javascript">
+		function validate(route) {
+			$.ajax({
+				url: route,
+				cache: false,
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				success: function(data){
+					if(data.hasOwnProperty('status') && data.status === 'TEST_FINISHED') {
+						$('#form-submit').submit();
+						$('#form-submit').remove();
+					}
+				}
+			});
+		}
 
-    setInterval(function(){validate(route);}, 10000);
-</script>
-</body>
-</html>
+		var route = $('#route').val();
+
+		setInterval(function(){validate(route);}, 10000);
+    </script>
+@endsection

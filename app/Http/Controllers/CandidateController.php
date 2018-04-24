@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\AnswerImage;
 use App\Models\CandidateTest;
+use App\Models\EditableArea;
 use App\Models\Question;
 use App\Models\Test;
 use App\Repository\ImageRepository;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -88,14 +90,15 @@ class CandidateController extends Controller
         return redirect()->route('preStartTest', ['t' => $request->get('t')]);
     }
 
-    /**
-     * @param Request       $request
-     * @param CandidateTest $candidate_test_model
-     * @param Test          $test_model
-     *
-     * @return $this|\Illuminate\Http\RedirectResponse
-     */
-    public function preStartTest(Request $request, CandidateTest $candidate_test_model, Test $test_model)
+  /**
+   * @param \Illuminate\Http\Request  $request
+   * @param \App\Models\CandidateTest $candidate_test_model
+   * @param \App\Models\Test          $test_model
+   * @param \App\Models\EditableArea  $editable_area
+   *
+   * @return $this|\Illuminate\Http\RedirectResponse
+   */
+    public function preStartTest(Request $request, CandidateTest $candidate_test_model, Test $test_model, EditableArea $editable_area)
     {
         if (null === $this->token) {
             return view('front.candidate.error')->with(['token_not_present' => true]);
@@ -134,6 +137,18 @@ class CandidateController extends Controller
 
             $test_instance = $test_model->where(['id' => $test_candidate->test_id])->first();
             $test_total_time = (int)$test_candidate->validity / 60;
+            $editable_area = $editable_area->where('test_id', $test_candidate->test_id)->first();
+
+            if(null !== $editable_area) {
+              return view('front.candidate.pre_start_test')->with(
+                [
+                  'test_total_time' => $test_total_time,
+                  'test_name'       => $test_instance->name,
+                  'editable_area'  => $editable_area,
+                  't'               => $request->get('t'),
+                ]
+              );
+            }
 
             return view('front.candidate.pre_start_test')->with(
                 [
@@ -300,6 +315,9 @@ class CandidateController extends Controller
             $test_candidate->is_valid = false;
             $test_candidate->save();
 
+            // Send email with test finished
+          $this->sendEmailTestFinished($request->get('test_token'), $candidate_test_model);
+
             return redirect()->route('testFinished');
 
         }catch (\Exception $exception){
@@ -307,6 +325,28 @@ class CandidateController extends Controller
                 ['error' => 'Something went wrong, contact a system administrator.']
             );
         }
+    }
+
+    private function sendEmailTestFinished($token, CandidateTest $candidate_test_model) {
+      try{
+        $candidate = $candidate_test_model
+          ->where('token', $token)
+          ->with('candidate')
+          ->first();
+
+        \Mail::send(
+          'mail.test_finished', // view
+          [
+            // data passed to the view
+            'candidate_name' => $candidate->candidate->fullname,
+          ],
+          function ($m) use ($candidate){
+            $m->to($candidate->candidate->from)->subject('Candidate ' . $candidate->candidate->fullname . ' has finished the test');
+          }
+        );
+      }catch(\Exception $exception) {
+        // TODO log exception
+      }
     }
 
     /**

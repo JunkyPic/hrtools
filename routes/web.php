@@ -94,4 +94,9 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     // Reviews
     Route::get('/invite/candidate', 'CandidateInviteController@getCreateInvite')->name('candidateGetCreateInvite');
 
+    // Editable areas
+    Route::get('/editable/list', 'EditableAreasController@getEditAreaTestList')->name('getEditAreaTestList');
+    Route::get('/editable/{test_id}/prestarttest', 'EditableAreasController@getEditAreaPrestartTest')->name('getEditAreaPrestartTest');
+    Route::post('/editable/{test_id}/prestarttest', 'EditableAreasController@postEditAreaPrestartTest')->name('postEditAreaPrestartTest');
+
 });
