@@ -10,6 +10,28 @@ class RolesAndPermissions {
   const ROLE_ADMIN = 'admin';
   const ROLE_CONTENT_CREATOR = 'content creator';
   const ROLE_REVIEWER = 'reviewer';
+  // questions
+  const PERMISSION_EDIT_QUESTION = 'edit question';
+  const PERMISSION_ADD_QUESTION = 'add question';
+  const PERMISSION_DELETE_QUESTION = 'delete question';
+  // tags
+  const PERMISSION_EDIT_TAG = 'edit tag';
+  const PERMISSION_ADD_TAG = 'add tag';
+  const PERMISSION_DELETE_TAG = 'delete tag';
+  // chapters
+  const PERMISSION_EDIT_CHAPTER = 'edit chapter';
+  const PERMISSION_ADD_CHAPTER = 'add chapter';
+  const PERMISSION_DELETE_CHAPTER = 'delete chapter';
+  // tests
+  const PERMISSION_ADD_TEST = 'add test';
+  const PERMISSION_EDIT_TEST = 'edit test';
+  const PERMISSION_DELETE_TEST = 'delete test';
+  //review
+  const PERMISSION_ADD_REVIEW = 'add review';
+  const PERMISSION_EDIT_REVIEW = 'edit review';
+  //invites
+  const PERMISSION_INVITE_USER = 'invite user';
+  const PERMISSION_INVITE_CANDIDATE = 'invite candidate';
 
   private $roles = [
     self::ROLE_ADMIN,
@@ -18,51 +40,60 @@ class RolesAndPermissions {
   ];
 
   private $permissions = [
-    'edit question',
-    'add question',
-    'delete question',
-    'edit chapter',
-    'add chapter',
-    'delete chapter',
-    'edit test',
-    'add test',
-    'delete test',
-    'add review',
-    'edit review',
-    'invite user',
-    'invite candidate',
+    self::PERMISSION_EDIT_TAG,
+    self::PERMISSION_ADD_TAG,
+    self::PERMISSION_DELETE_TAG,
+    self::PERMISSION_EDIT_QUESTION,
+    self::PERMISSION_ADD_QUESTION,
+    self::PERMISSION_DELETE_QUESTION,
+    self::PERMISSION_EDIT_CHAPTER,
+    self::PERMISSION_ADD_CHAPTER,
+    self::PERMISSION_DELETE_CHAPTER,
+    self::PERMISSION_EDIT_TEST,
+    self::PERMISSION_ADD_TEST,
+    self::PERMISSION_DELETE_TEST,
+    self::PERMISSION_ADD_REVIEW,
+    self::PERMISSION_EDIT_REVIEW,
+    self::PERMISSION_INVITE_USER,
+    self::PERMISSION_INVITE_CANDIDATE,
   ];
 
   private $role_and_permissions = [
     self::ROLE_CONTENT_CREATOR => [
-      'edit question',
-      'add question',
-      'delete question',
-      'edit chapter',
-      'add chapter',
-      'delete chapter',
-      'edit test',
-      'add test',
-      'delete test',
+      self::PERMISSION_EDIT_TAG,
+      self::PERMISSION_ADD_TAG,
+      self::PERMISSION_DELETE_TAG,
+      self::PERMISSION_EDIT_QUESTION,
+      self::PERMISSION_ADD_QUESTION,
+      self::PERMISSION_DELETE_QUESTION,
+      self::PERMISSION_EDIT_CHAPTER,
+      self::PERMISSION_ADD_CHAPTER,
+      self::PERMISSION_DELETE_CHAPTER,
+      self::PERMISSION_EDIT_TEST,
+      self::PERMISSION_ADD_TEST,
+      self::PERMISSION_DELETE_TEST,
     ],
     self::ROLE_REVIEWER        => [
-      'add review',
-      'edit review',
+      self::PERMISSION_ADD_REVIEW,
+      self::PERMISSION_EDIT_REVIEW,
     ],
     self::ROLE_ADMIN           => [
-      'invite user',
-      'invite candidate',
-      'edit question',
-      'add question',
-      'delete question',
-      'edit chapter',
-      'add chapter',
-      'delete chapter',
-      'edit test',
-      'add test',
-      'delete test',
-      'add review',
-      'edit review',
+      self::PERMISSION_EDIT_TAG,
+      self::PERMISSION_ADD_TAG,
+      self::PERMISSION_DELETE_TAG,
+      self::PERMISSION_EDIT_QUESTION,
+      self::PERMISSION_ADD_QUESTION,
+      self::PERMISSION_DELETE_QUESTION,
+      self::PERMISSION_EDIT_CHAPTER,
+      self::PERMISSION_ADD_CHAPTER,
+      self::PERMISSION_DELETE_CHAPTER,
+      self::PERMISSION_EDIT_TEST,
+      self::PERMISSION_ADD_TEST,
+      self::PERMISSION_DELETE_TEST,
+      self::PERMISSION_ADD_REVIEW,
+      self::PERMISSION_EDIT_REVIEW,
+      self::PERMISSION_INVITE_USER,
+      self::PERMISSION_INVITE_CANDIDATE,
     ],
   ];
 

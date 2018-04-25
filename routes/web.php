@@ -91,9 +91,6 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/invite/candidate', 'CandidateInviteController@getCreateInvite')->name('candidateGetCreateInvite');
     Route::post('/invite/candidate', 'CandidateInviteController@postCreateInvite')->name('candidatePostCreateInvite');
 
-    // Reviews
-    Route::get('/invite/candidate', 'CandidateInviteController@getCreateInvite')->name('candidateGetCreateInvite');
-
     // Roles
     Route::get('/roles/users', 'RolesController@getUserByRoles')->name('getUserByRoles');
     Route::post('/roles/user/assign', 'RolesController@assignRole')->name('assignRole');

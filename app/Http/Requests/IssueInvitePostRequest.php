@@ -12,7 +12,7 @@ class IssueInvitePostRequest extends FormRequest
      */
     public function authorize()
     {
-        return \Auth::user()->hasRole(RolesAndPermissions::ROLE_ADMIN);
+        return \Auth::user()->hasPermissionTo(RolesAndPermissions::PERMISSION_INVITE_USER);
     }
 
     /**

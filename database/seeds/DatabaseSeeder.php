@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
 
       $user = \App\User::where('id', '=', 1)->first();
 
-      $roles = ['content creator', 'reviewer', 'admin'];
+      $roles = $roles_and_permission->getAllRoles();
 
       foreach($roles as $role) {
           if(!$user->hasRole($role)) {

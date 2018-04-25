@@ -12,7 +12,7 @@ class TestControllerPostUpdateReview extends FormRequest
      */
     public function authorize()
     {
-        return \Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_REVIEWER, RolesAndPermissions::ROLE_ADMIN]);
+        return \Auth::user()->hasPermissionTo(RolesAndPermissions::PERMISSION_EDIT_REVIEW);
     }
 
     /**

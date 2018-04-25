@@ -14,7 +14,7 @@
         <table class="table table-hover">
             <thead>
             <tr class="table-primary">
-                <td>Role <strong>{{ $key }}</strong> can</td>
+                <td> <strong>{{ $key }}</strong> can</td>
             </tr>
             </thead>
             <tbody>

@@ -12,7 +12,7 @@ class QuestionControllerPostCreateQuestion extends FormRequest
      */
     public function authorize()
     {
-        return \Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_CONTENT_CREATOR, RolesAndPermissions::ROLE_ADMIN]);
+        return \Auth::user()->hasPermissionTo(RolesAndPermissions::PERMISSION_ADD_QUESTION);
     }
 
     /**
