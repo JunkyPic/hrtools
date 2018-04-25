@@ -52,6 +52,7 @@
                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Roles<span class="caret"></span></a>
                         <div class="dropdown-menu" aria-labelledby="profile">
                             <a class="dropdown-item" href="{{ route('getUserByRoles') }}">Users by roles</a>
+                            <a class="dropdown-item" href="{{ route('getPermissionByRoles') }}">Permissions in role</a>
                         </div>
                     </li>
                 @endrole

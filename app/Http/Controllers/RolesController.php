@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mapping\Roles;
+use App\Mapping\RolesAndPermissions;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,7 +37,7 @@ class RolesController extends Controller
      * @return JsonResponse
      */
     public function assignRole(Request $request, User $user) {
-        if(!\Auth::user()->hasRole(Roles::ROLE_ADMIN)) {
+        if(!\Auth::user()->hasRole(RolesAndPermissions::ROLE_ADMIN)) {
             return new JsonResponse([
                 'message' => 'You don\'t have permission to do that',
             ]);
@@ -79,7 +79,7 @@ class RolesController extends Controller
      * @return JsonResponse
      */
     public function revokeRole(Request $request, User $user) {
-        if(!\Auth::user()->hasRole(Roles::ROLE_ADMIN)) {
+        if(!\Auth::user()->hasRole(RolesAndPermissions::ROLE_ADMIN)) {
             return new JsonResponse([
                 'message' => 'You don\'t have permission to do that',
             ]);
@@ -112,5 +112,9 @@ class RolesController extends Controller
                 'message' => 'Unable to query database',
             ]);
         }
+    }
+
+    public function getPermissionByRoles(RolesAndPermissions $roles_and_permissions) {
+      return view('admin.roles.permission')->with(['roles_and_permissions' => $roles_and_permissions]);
     }
 }

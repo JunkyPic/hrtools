@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthControllerPostLogin;
 use App\Http\Requests\AuthControllerPostRegister;
+use App\Mapping\RolesAndPermissions;
 use App\Models\Invite;
 use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -71,40 +72,57 @@ class AuthController extends Controller
         return view('auth.register')->with(['token' => $token]);
     }
 
-    /**
-     * @param AuthControllerPostRegister $request
-     * @param Invite                     $invite
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function postRegister(AuthControllerPostRegister $request, Invite $invite)
+  /**
+   * @param \App\Http\Requests\AuthControllerPostRegister $request
+   * @param \App\Models\Invite                            $invite
+   * @param \App\Mapping\RolesAndPermissions              $roles_and_permissions
+   * @param \App\User                                     $user
+   *
+   * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+   */
+    public function postRegister(AuthControllerPostRegister $request, Invite $invite, RolesAndPermissions $roles_and_permissions, User $user)
     {
         if ( ! $request->request->has('token')) {
             return view('responses.invalid_invite');
         }
 
-        $token = $invite->where(['token' => $request->request->get('token'), 'is_valid' => true])->first();
+        $model = $invite->with('roles')->where(['token' => $request->request->get('token'), 'is_valid' => true])->first();
 
-        if (null === $token) {
+        if (null === $model) {
             abort(404);
         }
 
-        $token->is_valid = false;
-        $token->save();
+        $model->is_valid = false;
+        $model->save();
 
-        User::create(
+        $user->create(
             [
                 'username' => $request->get('username'),
-                'email'    => $token->to,
+                'email'    => $model->to,
                 'password' => \Hash::make($request->get('password')),
             ]
         );
+
+
         if (\Auth::attempt(
             [
-                'email' => $token->to,
+                'email' => $model->to,
                 'password' => $request->get('password'),
             ]
         )) {
+          $user = \Auth::user();
+          $roles = $roles_and_permissions->getAllRoles();
+
+          foreach($model->roles as $role) {
+            if(!in_array($role->role_name, $roles)) {
+              continue;
+            }
+
+            if(!$user->hasRole($role->role_name)) {
+              $user->assignRole($role->role_name);
+            }
+          }
+
             return redirect()->route('userProfile');
         }
 

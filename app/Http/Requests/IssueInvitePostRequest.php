@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Mapping\Roles;
+use App\Mapping\RolesAndPermissions;
 use Illuminate\Foundation\Http\FormRequest;
 
 class IssueInvitePostRequest extends FormRequest
@@ -12,7 +12,7 @@ class IssueInvitePostRequest extends FormRequest
      */
     public function authorize()
     {
-        return \Auth::user()->hasRole(Roles::ROLE_ADMIN);
+        return \Auth::user()->hasRole(RolesAndPermissions::ROLE_ADMIN);
     }
 
     /**

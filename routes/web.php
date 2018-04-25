@@ -98,5 +98,7 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/roles/users', 'RolesController@getUserByRoles')->name('getUserByRoles');
     Route::post('/roles/user/assign', 'RolesController@assignRole')->name('assignRole');
     Route::post('/roles/user/revoke', 'RolesController@revokeRole')->name('revokeRole');
+    Route::get('/roles/permissions', 'RolesController@getPermissionByRoles')->name('getPermissionByRoles');
+
 
 });

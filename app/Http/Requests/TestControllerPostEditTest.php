@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Mapping\Roles;
+use App\Mapping\RolesAndPermissions;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TestControllerPostEditTest extends FormRequest
@@ -12,7 +12,7 @@ class TestControllerPostEditTest extends FormRequest
      */
     public function authorize()
     {
-        return \Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN]);
+        return \Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_CONTENT_CREATOR, RolesAndPermissions::ROLE_ADMIN]);
     }
 
     /**

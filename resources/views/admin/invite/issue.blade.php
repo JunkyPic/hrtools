@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-
     <div class="row justify-content-center">
         <div class="col-md-12 spacing-top text-center">
             <div class="alert alert-dismissible alert-danger">
@@ -76,6 +75,26 @@
                         @if ($errors->has('validity'))
                             <span class="invalid-feedback">
                                 <strong>{{ $errors->first('validity') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="roles" class="col-md-2 col-form-label text-md-right">{{ __('Give roles') }}</label>
+                    <div class="col-md-10">
+                        <ul class="list-inline">
+                            @foreach($roles as $role)
+                                <li class="list-inline-item">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="roles[{{$role}}]" value="{{ $role }}"> {{ $role }}
+                                    </label>
+                                </li>
+                            @endforeach
+                        </ul>
+                        @if ($errors->has('roles'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('roles') }}</strong>
                             </span>
                         @endif
                     </div>

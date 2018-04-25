@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\QuestionControllerPostCreateQuestion;
 use App\Http\Requests\QuestionControllerPostEditQuestion;
-use App\Mapping\Roles;
+use App\Mapping\RolesAndPermissions;
 use App\Models\Chapter;
 use App\Models\Question;
 use App\Models\Tag;
@@ -32,7 +32,7 @@ class QuestionController extends Controller
      */
     public function questionChapterAssociate(Request $request, Chapter $chapter_model)
     {
-        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+        if(!\Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_CONTENT_CREATOR, RolesAndPermissions::ROLE_ADMIN])) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -264,7 +264,7 @@ class QuestionController extends Controller
      */
     public function delete($question_id, Question $question, ImageRepository $image_repository)
     {
-        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+        if(!\Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_CONTENT_CREATOR, RolesAndPermissions::ROLE_ADMIN])) {
             return redirect()->back()->with(
                 ['message' => 'You are not authorized to perform that action', 'alert_type' => 'danger']
             );
@@ -301,7 +301,7 @@ class QuestionController extends Controller
      */
     public function updateImages(Request $request, Question $question, ImageRepository $image_repository)
     {
-        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+        if(!\Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_CONTENT_CREATOR, RolesAndPermissions::ROLE_ADMIN])) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -373,7 +373,7 @@ class QuestionController extends Controller
      */
     public function manageTag(Request $request, Question $question)
     {
-        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+        if(!\Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_CONTENT_CREATOR, RolesAndPermissions::ROLE_ADMIN])) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -443,7 +443,7 @@ class QuestionController extends Controller
         Question $question,
         ImageRepository $image_repository
     ){
-        if(!\Auth::user()->hasAnyRole([Roles::ROLE_CONTENT_CREATOR, Roles::ROLE_ADMIN])) {
+        if(!\Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_CONTENT_CREATOR, RolesAndPermissions::ROLE_ADMIN])) {
             return redirect()->back()->with(
                 ['message' => 'You are not authorized to perform that action', 'alert_type' => 'danger']
             );

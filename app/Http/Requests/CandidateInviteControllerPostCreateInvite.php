@@ -2,17 +2,19 @@
 
 namespace App\Http\Requests;
 
-use App\Mapping\Roles;
+use App\Mapping\RolesAndPermissions;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CandidateInviteControllerPostCreateInvite extends FormRequest
 {
-    /**
-     * @return bool
-     */
+
+  /**
+   * @return bool
+   * @throws \Exception
+   */
     public function authorize()
     {
-        return \Auth::user()->hasAnyRole([Roles::ROLE_INVITE_CANDIDATES, Roles::ROLE_ADMIN]);
+        return \Auth::user()->hasRole(RolesAndPermissions::ROLE_ADMIN);
     }
 
     /**

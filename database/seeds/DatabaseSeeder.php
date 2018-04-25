@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Seeder;
-
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -15,7 +14,7 @@ class DatabaseSeeder extends Seeder
             $this->call(QuestionTableSeeder::class);
         }
          $this->createAdmin();
-         $this->createDefaultRoles();
+         $this->createDefaultRolesAndPermissions();
     }
 
     private function createAdmin() {
@@ -28,21 +27,19 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 
-    private function createDefaultRoles() {
-        \Spatie\Permission\Models\Role::create(['name' => 'content creator']);
-        \Spatie\Permission\Models\Role::create(['name' => 'reviewer']);
-        \Spatie\Permission\Models\Role::create(['name' => 'admin']);
-        \Spatie\Permission\Models\Role::create(['name' => 'invite users']);
-        \Spatie\Permission\Models\Role::create(['name' => 'invite candidates']);
+    private function createDefaultRolesAndPermissions() {
+      $roles_and_permission = new \App\Mapping\RolesAndPermissions();
 
-        $user = \App\User::where('id', '=', 1)->first();
+      $roles_and_permission->createRolesAndPermissions();
 
-        $roles = ['content creator', 'reviewer', 'admin', 'invite users', 'invite candidates'];
+      $user = \App\User::where('id', '=', 1)->first();
 
-        foreach($roles as $role) {
-            if(!$user->hasRole($role)) {
-                $user->assignRole($role);
-            }
-        }
+      $roles = ['content creator', 'reviewer', 'admin'];
+
+      foreach($roles as $role) {
+          if(!$user->hasRole($role)) {
+              $user->assignRole($role);
+          }
+      }
     }
 }

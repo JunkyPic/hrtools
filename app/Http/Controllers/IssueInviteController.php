@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IssueInvitePostRequest;
+use App\Mapping\RolesAndPermissions;
 use App\Models\Invite;
 use App\User;
 use Illuminate\Http\JsonResponse;
@@ -17,14 +18,19 @@ use Illuminate\Support\Str;
  */
 class IssueInviteController extends Controller
 {
-    /**
-     * @param User $user
-     *
-     * @return $this
-     */
-    public function show(User $user)
+
+  /**
+   * @param \App\User                        $user
+   * @param \App\Mapping\RolesAndPermissions $roles_and_permissions
+   *
+   * @return $this
+   */
+    public function show(User $user, RolesAndPermissions $roles_and_permissions)
     {
-        return view('admin.invite.issue')->with(['user' => $user->find(1)]);
+        return view('admin.invite.issue')->with([
+          'user' => $user->find(\Auth::user()->id),
+          'roles' => $roles_and_permissions->getAllRoles(),
+        ]);
     }
 
     /**
@@ -37,6 +43,12 @@ class IssueInviteController extends Controller
     {
         $token = Str::random(50);
 
+        if(!$request->has('roles')) {
+          return redirect()->back()->with(['message' => 'At least one role must be selected', 'alert_type' => 'danger']);
+        }
+
+        $roles = $request->get('roles');
+
         $current_invite = $invite->where(['to' => $request->get('to'), 'is_valid' => true])->first();
 
         if (null !== $current_invite && $current_invite->count() >= 1) {
@@ -44,7 +56,7 @@ class IssueInviteController extends Controller
             $current_invite->save();
         }
 
-        Invite::create(
+        $invite = $invite->create(
             [
                 'from'     => \Auth::user()->email,
                 'token'    => $token,
@@ -53,6 +65,13 @@ class IssueInviteController extends Controller
                 'validity' => $request->get('validity'),
             ]
         );
+
+        foreach($roles as $role) {
+          $invite->roles()->create([
+              'invite_id' => $invite->id,
+              'role_name' => $role,
+          ]);
+        }
 
         Mail::send(
             'mail.issue', // view

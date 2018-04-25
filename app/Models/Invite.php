@@ -21,4 +21,8 @@ class Invite extends Model
 
     public $timestamps = true;
 
+    public function roles() {
+      return $this->hasMany(InviteRole::class, 'invite_id');
+    }
+
 }
