@@ -9,6 +9,7 @@ use App\Models\Chapter;
 use App\Models\Question;
 use App\Models\Tag;
 use App\Repository\ImageRepository;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -254,16 +255,20 @@ class QuestionController extends Controller
         );
     }
 
-    /**
-     * @param                 $question_id
-     * @param Question        $question
-     * @param ImageRepository $image_repository
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Exception
-     */
-    public function delete($question_id, Question $question, ImageRepository $image_repository)
+  /**
+   * @param                                  $question_id
+   * @param \App\Models\Question             $question
+   * @param \App\Mapping\RolesAndPermissions $roles_and_permissions
+   * @param \App\Repository\ImageRepository  $image_repository
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   * @throws \Illuminate\Auth\Access\AuthorizationException
+   */
+    public function delete($question_id, Question $question, RolesAndPermissions $roles_and_permissions, ImageRepository $image_repository)
     {
+      if(!$roles_and_permissions->hasPermissionTo(RolesAndPermissions::PERMISSION_DELETE_CHAPTER)) {
+        throw new AuthorizationException();
+      }
         if(!\Auth::user()->hasAnyRole([RolesAndPermissions::ROLE_CONTENT_CREATOR, RolesAndPermissions::ROLE_ADMIN])) {
             return redirect()->back()->with(
                 ['message' => 'You are not authorized to perform that action', 'alert_type' => 'danger']

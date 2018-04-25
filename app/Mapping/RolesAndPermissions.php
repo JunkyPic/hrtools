@@ -97,6 +97,10 @@ class RolesAndPermissions {
     ],
   ];
 
+  public function hasPermissionTo($permission) {
+    return \Auth::user()->hasPermissionTo($permission);
+  }
+
   public function getAllRoles() {
     return $this->roles;
   }

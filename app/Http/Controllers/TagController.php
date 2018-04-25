@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TagControllerPostCreateTag;
 use App\Http\Requests\TagControllerPostEditRequest;
+use App\Mapping\RolesAndPermissions;
 use App\Models\Tag;
+use Illuminate\Auth\Access\AuthorizationException;
 
 /**
  * Class TagController
@@ -46,13 +48,18 @@ class TagController extends Controller
         return redirect()->back()->with(['message' => 'Tag created successfully', 'alert_type' => 'success']);
     }
 
-    /**
-     * @param     $tag_id
-     * @param Tag $tag_model
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function delete($tag_id, Tag $tag_model) {
+  /**
+   * @param                                  $tag_id
+   * @param \App\Mapping\RolesAndPermissions $roles_and_permissions
+   * @param \App\Models\Tag                  $tag_model
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   * @throws \Illuminate\Auth\Access\AuthorizationException
+   */
+    public function delete($tag_id,RolesAndPermissions $roles_and_permissions, Tag $tag_model) {
+      if(!$roles_and_permissions->hasPermissionTo(RolesAndPermissions::PERMISSION_DELETE_CHAPTER)) {
+        throw new AuthorizationException();
+      }
         $tag = $tag_model->where(['id' => $tag_id])->with('questions')->first();
 
         if(null === $tag) {

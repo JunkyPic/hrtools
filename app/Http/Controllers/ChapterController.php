@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ChapterControllerPostCreateChapter;
 use App\Http\Requests\ChapterControllerPostEditChapter;
+use App\Mapping\RolesAndPermissions;
 use App\Models\Chapter;
 use App\Models\Test;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -76,13 +78,19 @@ class ChapterController extends Controller
         return redirect()->back()->with(['message' => 'Chapter created successfully', 'alert_type' => 'success']);
     }
 
-    /**
-     * @param         $chapter_id
-     * @param Chapter $chapter_model
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function delete($chapter_id, Chapter $chapter_model) {
+  /**
+   * @param                                  $chapter_id
+   * @param \App\Mapping\RolesAndPermissions $roles_and_permissions
+   * @param \App\Models\Chapter              $chapter_model
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   * @throws \Illuminate\Auth\Access\AuthorizationException
+   */
+    public function delete($chapter_id, RolesAndPermissions $roles_and_permissions, Chapter $chapter_model) {
+      if(!$roles_and_permissions->hasPermissionTo(RolesAndPermissions::PERMISSION_DELETE_CHAPTER)) {
+        throw new AuthorizationException();
+      }
+
         $chapter = $chapter_model->where(['id' => $chapter_id])->first();
         try{
             $chapter->delete();

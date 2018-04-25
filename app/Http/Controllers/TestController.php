@@ -6,10 +6,12 @@ use App\Http\Requests\TestControllerPostCreateTest;
 use App\Http\Requests\TestControllerPostEditTest;
 use App\Http\Requests\TestControllerPostSubmitReview;
 use App\Http\Requests\TestControllerPostUpdateReview;
+use App\Mapping\RolesAndPermissions;
 use App\Models\Candidate;
 use App\Models\CandidateTest;
 use App\Models\Review;
 use App\Models\Test;
+use Illuminate\Auth\Access\AuthorizationException;
 
 /**
  * Class TestController
@@ -95,13 +97,18 @@ class TestController extends Controller
         return redirect()->back()->with(['message' => 'Test updated successfully', 'alert_type' => 'success']);
     }
 
-    /**
-     * @param      $test_id
-     * @param Test $test_model
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function delete($test_id, Test $test_model) {
+  /**
+   * @param                                  $test_id
+   * @param \App\Mapping\RolesAndPermissions $roles_and_permissions
+   * @param \App\Models\Test                 $test_model
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   * @throws \Illuminate\Auth\Access\AuthorizationException
+   */
+    public function delete($test_id, RolesAndPermissions $roles_and_permissions, Test $test_model) {
+      if(!$roles_and_permissions->hasPermissionTo(RolesAndPermissions::PERMISSION_DELETE_CHAPTER)) {
+        throw new AuthorizationException();
+      }
         try{
             $test = $test_model->where(['id' => $test_id])->first();
 
