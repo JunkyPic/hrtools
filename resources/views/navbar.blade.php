@@ -47,12 +47,6 @@
                     </div>
                 </li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Editable areas<span class="caret"></span></a>
-                    <div class="dropdown-menu" aria-labelledby="profile">
-                        <a class="dropdown-item" href="{{ route('getEditAreaTestList') }}">Prestart test</a>
-                    </div>
-                </li>
                 @role('admin')
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes" aria-expanded="false">Roles<span class="caret"></span></a>

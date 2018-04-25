@@ -23,7 +23,8 @@ class TestControllerPostCreateTest extends FormRequest
     public function rules()
     {
         return [
-            'name'=> 'required|string|max:300',
+            'name' => 'required|string|max:300',
+            'instructions'=> 'required|string|max:20000',
             'information' => 'sometimes|nullable|string|max:10000',
         ];
     }
@@ -36,6 +37,8 @@ class TestControllerPostCreateTest extends FormRequest
             'name.required' => 'The chapter name field is required',
             'name.max' => 'The chapter name must be at most 300 characters',
             'information.max' => 'The chapter name must be at most 10000 characters',
+            'instructions.max' => 'The chapter name must be at most 20000 characters',
+            'instructions.required' => 'The instructions field is required',
         ];
     }
 }

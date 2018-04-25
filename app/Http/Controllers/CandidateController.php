@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
-use App\Models\AnswerImage;
 use App\Models\CandidateTest;
-use App\Models\EditableArea;
 use App\Models\Question;
 use App\Models\Test;
 use App\Repository\ImageRepository;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -94,11 +91,10 @@ class CandidateController extends Controller
    * @param \Illuminate\Http\Request  $request
    * @param \App\Models\CandidateTest $candidate_test_model
    * @param \App\Models\Test          $test_model
-   * @param \App\Models\EditableArea  $editable_area
    *
    * @return $this|\Illuminate\Http\RedirectResponse
    */
-    public function preStartTest(Request $request, CandidateTest $candidate_test_model, Test $test_model, EditableArea $editable_area)
+    public function preStartTest(Request $request, CandidateTest $candidate_test_model, Test $test_model)
     {
         if (null === $this->token) {
             return view('front.candidate.error')->with(['token_not_present' => true]);
@@ -137,22 +133,11 @@ class CandidateController extends Controller
 
             $test_instance = $test_model->where(['id' => $test_candidate->test_id])->first();
             $test_total_time = (int)$test_candidate->validity / 60;
-            $editable_area = $editable_area->where('test_id', $test_candidate->test_id)->first();
-
-            if(null !== $editable_area) {
-              return view('front.candidate.pre_start_test')->with(
-                [
-                  'test_total_time' => $test_total_time,
-                  'test_name'       => $test_instance->name,
-                  'editable_area'  => $editable_area,
-                  't'               => $request->get('t'),
-                ]
-              );
-            }
 
             return view('front.candidate.pre_start_test')->with(
                 [
                     'test_total_time' => $test_total_time,
+                    'instructions' => $test_instance->instructions,
                     'test_name'       => $test_instance->name,
                     't'               => $request->get('t'),
                 ]

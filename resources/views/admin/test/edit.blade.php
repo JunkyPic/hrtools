@@ -14,7 +14,7 @@
             <form method="POST" action="{{ route('testPostEdit', ['id' => $test->id]) }}">
                 @csrf
                 <div class="form-group row">
-                    <label for="name" class="col-sm-2 col-form-label text-md-right">{{ __('Test name') }}</label>
+                    <label for="name" class="col-sm-2 col-form-label text-md-right">{{ __('Name') }}</label>
                     <div class="col-md-10">
                         <input id="name" type="text"
                                class="form-control{{ $errors->has('chapter') ? ' is-invalid' : '' }}" name="name"
@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="information" class="col-sm-2 col-form-label text-md-right">{{ __('Test information') }}</label>
+                    <label for="information" class="col-sm-2 col-form-label text-md-right">{{ __('Information') }}</label>
                     <div class="col-md-10">
                         <input id="information" type="text"
                                class="form-control{{ $errors->has('information') ? ' is-invalid' : '' }}" name="information"
@@ -36,6 +36,21 @@
                         @if ($errors->has('information'))
                             <span class="invalid-feedback">
                                 <strong>{{ $errors->first('information') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="instructions" class="col-md-2 col-form-label text-md-right">{{ __('Instructions') }}</label>
+
+                    <div class="col-md-10">
+                        <textarea id="instructions" rows="10"
+                                  class="form-control{{ $errors->has('instructions') ? ' is-invalid' : '' }}" name="instructions"
+                                  required>{{ $test->instructions }}</textarea>
+                        @if ($errors->has('instructions'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('instructions') }}</strong>
                             </span>
                         @endif
                     </div>

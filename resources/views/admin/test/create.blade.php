@@ -14,7 +14,7 @@
             <form method="POST" action="{{ route('testPostCreate') }}">
                 @csrf
                 <div class="form-group row">
-                    <label for="name" class="col-sm-2 col-form-label text-md-right">{{ __('Test name') }}</label>
+                    <label for="name" class="col-sm-2 col-form-label text-md-right">{{ __('Name') }}</label>
 
                     <div class="col-md-10">
                         <input id="name" type="text"
@@ -30,7 +30,7 @@
 
                 <div class="form-group row">
                     <label for="information"
-                           class="col-sm-2 col-form-label text-md-right">{{ __('Test information') }}</label>
+                           class="col-sm-2 col-form-label text-md-right">{{ __('Information') }}</label>
                     <div class="col-md-10">
                         <input id="information" type="text"
                                class="form-control{{ $errors->has('information') ? ' is-invalid' : '' }}"
@@ -46,6 +46,22 @@
                         </small>
                     </div>
                 </div>
+
+                <div class="form-group row">
+                    <label for="instructions" class="col-md-2 col-form-label text-md-right">{{ __('Instructions') }}</label>
+
+                    <div class="col-md-10">
+                        <textarea id="instructions" rows="10"
+                                  class="form-control{{ $errors->has('instructions') ? ' is-invalid' : '' }}" name="instructions"
+                                  required></textarea>
+                        @if ($errors->has('instructions'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('instructions') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="form-group row mb-0">
                     <div class="col-md-10 offset-md-2">
                         <button type="submit" class="btn btn-primary btn-lg btn-block">

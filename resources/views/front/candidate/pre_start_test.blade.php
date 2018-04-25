@@ -5,17 +5,13 @@
 @endsection
 
 @section('header')
-    @if(isset($editable_area))
-        {!! $editable_area->header !!}
-    @endif
+
 @endsection
 
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-10 offset-md-2">
-        @if(isset($editable_area))
-            {!! $editable_area->instructions !!}
-        @endif
+        {!! $instructions !!}
         <p>Information</p>
         <p>Test name - {{ $test_name }}</p>
         <p>Allowed time - {{ $test_total_time }} minutes</p>
@@ -49,9 +45,6 @@
 @endsection
 
 @section('footer')
-    @if(isset($editable_area))
-        {!! $editable_area->footer !!}
-    @endif
 @endsection
 
 @section('scripts')

@@ -6,14 +6,10 @@ use App\Http\Requests\TestControllerPostCreateTest;
 use App\Http\Requests\TestControllerPostEditTest;
 use App\Http\Requests\TestControllerPostSubmitReview;
 use App\Http\Requests\TestControllerPostUpdateReview;
-use App\Models\Answer;
 use App\Models\Candidate;
-use App\Models\CandidateQuestionTestImage;
 use App\Models\CandidateTest;
 use App\Models\Review;
 use App\Models\Test;
-use App\User;
-use Illuminate\Http\Request;
 
 /**
  * Class TestController
@@ -39,6 +35,7 @@ class TestController extends Controller
         try{
             $test_model->create([
                 'name' => $request->get('name'),
+                'instructions' => $request->get('instructions'),
                 'information' => $request->has('information') ? $request->get('information') : null,
             ]);
         }catch (\Exception $exception) {
