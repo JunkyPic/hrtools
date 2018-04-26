@@ -107,10 +107,14 @@
                 </div>
 
                 <div class="spacing-top row">
-                    <div class="col-md-1">
-                        <p>Tags </p>
-                    </div>
+                    <div class="col-md-12">
                     <ul class="list-inline">
+
+                        <li class="list-inline-item">
+                            <a href="#" onclick="return false;">
+                                <span class="badge badge-warning badge-pill">Tags @if($question->tags->count() >= 1) - {{ $question->tags->count() }} @endif</span>
+                            </a>
+                        </li>
                         @if($question->tags->count() >= 1)
                             @foreach($question->tags as $tag)
                                 <li class="list-inline-item">
@@ -119,16 +123,22 @@
                                 </li>
                             @endforeach
                         @else
-                            <li class="list-inline-item">No tags</li>
+                            <li class="list-inline-item">
+                                <span class="badge badge-primary badge-pill">{{ $question->tags->count() }}</span>
+                            </li>
                         @endif
                     </ul>
+                    </div>
                 </div>
 
                 <div class="spacing-top row">
-                    <div class="col-md-1">
-                        <p>Chapters</p>
-                    </div>
+                    <div class="col-md-12">
                     <ul class="list-inline">
+                        <li class="list-inline-item">
+                            <a href="#" onclick="return false;">
+                                <span class="badge badge-warning badge-pill">In chapters @if($question->chapters->count() >= 1) - {{ $question->chapters->count() }} @endif</span>
+                            </a>
+                        </li>
 
                     @if($question->chapters->count() >= 1)
                         @foreach($question->chapters as $chapter)
@@ -137,9 +147,12 @@
                             </li>
                         @endforeach
                     @else
-                        <li class="list-inline-item">Not in chapter(s)</li>
+                        <li class="list-inline-item">
+                            <span class="badge badge-primary badge-pill">{{ $question->chapters->count() }}</span>
+                        </li>
                     @endif
                     </ul>
+                    </div>
                 </div>
 
 
