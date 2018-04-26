@@ -114,6 +114,11 @@ class RolesController extends Controller
         }
     }
 
+  /**
+   * @param \App\Mapping\RolesAndPermissions $roles_and_permissions
+   *
+   * @return $this
+   */
     public function getPermissionByRoles(RolesAndPermissions $roles_and_permissions) {
       return view('admin.roles.permission')->with(['roles_and_permissions' => $roles_and_permissions]);
     }

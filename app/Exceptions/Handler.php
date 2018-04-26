@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -50,6 +51,8 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof AuthorizationException ) {
             return redirect()->back()->with(['message' => 'You are not authorized to perform that action', 'alert_type' => 'danger']);
+        }elseif($exception instanceof QueryException) {
+          return redirect()->back()->with(['message' => 'Database error', 'alert_type' => 'danger']);
         }
 
         return parent::render($request, $exception);

@@ -34,15 +34,11 @@ class TestController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postCreate(TestControllerPostCreateTest $request, Test $test_model) {
-        try{
-            $test_model->create([
-                'name' => $request->get('name'),
-                'instructions' => $request->get('instructions'),
-                'information' => $request->has('information') ? $request->get('information') : null,
-            ]);
-        }catch (\Exception $exception) {
-            return redirect()->back()->with(['message' => 'Unable to create test', 'alert_type' => 'danger']);
-        }
+        $test_model->create([
+            'name' => $request->get('name'),
+            'instructions' => $request->get('instructions'),
+            'information' => $request->has('information') ? $request->get('information') : null,
+        ]);
 
         return redirect()->back()->with(['message' => 'Test created successfully', 'alert_type' => 'success']);
     }
@@ -66,11 +62,7 @@ class TestController extends Controller
      * @return $this|\Illuminate\Http\RedirectResponse
      */
     public function getEdit($test_id, Test $test_model) {
-        try{
-            $test = $test_model->find($test_id);
-        }catch (\Exception $exception) {
-            return redirect()->back()->with(['message' => 'Unable to find test', 'alert_type' => 'danger']);
-        }
+        $test = $test_model->find($test_id);
 
         return view('admin.test.edit')->with(['test' => $test]);
     }
@@ -83,16 +75,12 @@ class TestController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postEdit($test_id, TestControllerPostEditTest $request, Test $test_model) {
-        try{
-            $test = $test_model->where(['id' => $test_id])->first();
+        $test = $test_model->where(['id' => $test_id])->first();
 
-            $test->update([
-                'name' => $request->get('name'),
-                'information' => $request->get('information'),
-            ]);
-        } catch (\Exception $exception) {
-            return redirect()->back()->with(['message' => 'Unable to update test', 'alert_type' => 'danger']);
-        }
+        $test->update([
+            'name' => $request->get('name'),
+            'information' => $request->get('information'),
+        ]);
 
         return redirect()->back()->with(['message' => 'Test updated successfully', 'alert_type' => 'success']);
     }
@@ -109,13 +97,9 @@ class TestController extends Controller
       if(!$roles_and_permissions->hasPermissionTo(RolesAndPermissions::PERMISSION_DELETE_CHAPTER)) {
         throw new AuthorizationException();
       }
-        try{
-            $test = $test_model->where(['id' => $test_id])->first();
+        $test = $test_model->where(['id' => $test_id])->first();
 
-            $test->delete();
-        } catch (\Exception $exception) {
-            return redirect()->back()->with(['message' => 'Unable to delete test', 'alert_type' => 'danger']);
-        }
+        $test->delete();
 
         return redirect()->route('testAll')->with(['message' => 'Test deleted successfully', 'alert_type' => 'success']);
     }

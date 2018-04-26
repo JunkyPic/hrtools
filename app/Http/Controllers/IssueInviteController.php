@@ -108,6 +108,12 @@ class IssueInviteController extends Controller
         return view('responses.invalid_invite');
     }
 
+  /**
+   * @param \Illuminate\Http\Request $request
+   * @param \App\Models\Invite       $invite_model
+   *
+   * @return \Illuminate\Http\JsonResponse
+   */
     public function revoke(Request $request, Invite $invite_model) {
         if(!$request->has('invite_id')) {
             return new JsonResponse([

@@ -31,15 +31,10 @@ class UserController extends Controller
         if(!\Hash::check($current_password, \Auth::user()->password)) {
           return redirect()->back()->with(['message' => 'Current password does not match the stored password', 'alert_type' => 'danger']);
         }
-
-        try{
-          //Change Password
-          $user = \Auth::user();
-          $user->password = \Hash::make($new_password);
-          $user->save();
-        } catch (\Exception $exception) {
-          return redirect()->back()->with(['message' => 'Database error:unable to change password at this time, try again later', 'alert_type' => 'danger']);
-        }
+      //Change Password
+      $user = \Auth::user();
+      $user->password = \Hash::make($new_password);
+      $user->save();
 
       return redirect()->back()->with(['message' => 'Password changed successfully', 'alert_type' => 'success']);
     }

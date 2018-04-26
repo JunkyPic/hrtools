@@ -40,14 +40,10 @@ class ChapterController extends Controller
     public function postEdit($chapter_id, ChapterControllerPostEditChapter $request, Chapter $chapter_model) {
         $chapter = $chapter_model->where(['id' => $chapter_id])->first();
 
-        try{
-            $chapter->update([
-               'chapter' => $request->get('chapter'),
-               'information' => $request->get('information'),
-            ]);
-        } catch (\Exception $exception) {
-            return redirect()->back()->with(['message' => 'Unable to update chapter', 'alert_type' => 'danger']);
-        }
+        $chapter->update([
+           'chapter' => $request->get('chapter'),
+           'information' => $request->get('information'),
+        ]);
 
         return redirect()->back()->with(['message' => 'Chapter updated successfully', 'alert_type' => 'success']);
     }
@@ -66,14 +62,10 @@ class ChapterController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postCreate(ChapterControllerPostCreateChapter $request, Chapter $chapter_model) {
-        try{
-            $chapter_model->create([
-                'chapter' => $request->get('chapter'),
-                'information' => $request->has('information') ? $request->get('information') : null,
-            ]);
-        }catch (\Exception $exception) {
-            return redirect()->back()->with(['message' => 'Unable to create chapter', 'alert_type' => 'danger']);
-        }
+        $chapter_model->create([
+            'chapter' => $request->get('chapter'),
+            'information' => $request->has('information') ? $request->get('information') : null,
+        ]);
 
         return redirect()->back()->with(['message' => 'Chapter created successfully', 'alert_type' => 'success']);
     }
@@ -92,11 +84,7 @@ class ChapterController extends Controller
       }
 
         $chapter = $chapter_model->where(['id' => $chapter_id])->first();
-        try{
-            $chapter->delete();
-        } catch (\Exception $exception) {
-            return redirect()->back()->with(['message' => 'Unable to delete chapter', 'alert_type' => 'danger']);
-        }
+        $chapter->delete();
 
         return redirect()->route('chapterAll')->with(['message' => 'Chapter deleted successfully', 'alert_type' => 'success']);
     }
