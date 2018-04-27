@@ -44,6 +44,7 @@
                         <a class="dropdown-item" href="{{ route('getUserInvites') }}">User invites</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('candidateGetCreateInvite') }}">Invite candidate</a>
+                        <a class="dropdown-item" href="{{ route('candidateAllInvites') }}">Candidate invites</a>
                     </div>
                 </li>
 

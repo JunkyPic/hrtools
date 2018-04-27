@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CandidateInviteControllerPostCreateInvite;
 use App\Models\Candidate;
+use App\Models\CandidateTest;
 use App\Models\Test;
 use App\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -95,5 +98,42 @@ class CandidateInviteController extends Controller
         );
 
         return redirect()->back()->with(['message' => 'Email sent!', 'alert_type' => 'success']);
+    }
+
+    public function all(Candidate $candidate) {
+      $invites = $candidate->with('candidateTest')->get();
+
+      return view('admin.invite.candidate.invites')->with(['invites' => $invites]);
+    }
+
+    public function invalidateInvite(Request $request, CandidateTest $candidate_test) {
+      if(!$request->has('test_id')) {
+        return new JsonResponse([
+          'message' => 'Parameter not found. Unable to execute action, please contact a system administrator.',
+        ]);
+      }
+
+      $test_id = $request->get('test_id');
+
+      $candidate_test = $candidate_test->where(['id' => $test_id])->first();
+
+
+      if(null === $candidate_test) {
+        return new JsonResponse([
+          'message' => 'Unable to find test with test_id' . $test_id . '. Contact a system administrator.',
+        ]);
+      }
+
+      $candidate_test->is_valid = false;
+      if($candidate_test->save()) {
+        return new JsonResponse([
+          'success' => true,
+          'message' => 'Invite revoked successfully',
+        ]);
+      }
+
+      return new JsonResponse([
+        'message' => 'Unable to revoke invite at this time',
+      ]);
     }
 }

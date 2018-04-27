@@ -116,7 +116,11 @@
                         <div class="col-md-10">
                             <select name="test_validity" class="form-control" id="test_validity">
                                 <option value="1800">30 minutes</option>
-                                <option value="2700" selected>45 minutes</option>
+                                <option value="2100">35 minutes</option>
+                                <option value="2400">40 minutes</option>
+                                <option value="2700">45 minutes</option>
+                                <option value="3000" selected>50 minutes</option>
+                                <option value="3300">55 minutes</option>
                                 <option value="3600">1 hour</option>
                             </select>
                             @if ($errors->has('test_validity'))

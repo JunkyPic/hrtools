@@ -85,11 +85,13 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/invite/user', 'IssueInviteController@show')->name('getIssueInvite');
     Route::post('/invite/user', 'IssueInviteController@issue')->name('postIssueInvite');
     Route::get('/invites/users', 'IssueInviteController@getUserInvites')->name('getUserInvites');
-    Route::post('/invites/revoke', 'IssueInviteController@revoke')->name('revokeInvite');
+    Route::post('/invites/revoke', 'IssueInviteController@invalidateInvite')->name('invalidateInvite');
 
     // Candidate invite issue
     Route::get('/invite/candidate', 'CandidateInviteController@getCreateInvite')->name('candidateGetCreateInvite');
     Route::post('/invite/candidate', 'CandidateInviteController@postCreateInvite')->name('candidatePostCreateInvite');
+    Route::get('/invite/candidate/all', 'CandidateInviteController@all')->name('candidateAllInvites');
+    Route::post('/invite/candidate/invalidate', 'CandidateInviteController@invalidateInvite')->name('invalidateInvite');
 
     // Roles
     Route::get('/roles/users', 'RolesController@getUserByRoles')->name('getUserByRoles');
