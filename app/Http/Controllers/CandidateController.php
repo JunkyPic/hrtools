@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\CandidateTest;
 use App\Models\Question;
 use App\Models\Test;
+use App\Models\TestDefaultMessage;
 use App\Repository\ImageRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -33,7 +34,6 @@ class CandidateController extends Controller
     {
         $this->token = $request->get('t');
     }
-
 
     /**
      * @param Request       $request
@@ -87,13 +87,13 @@ class CandidateController extends Controller
         return redirect()->route('preStartTest', ['t' => $request->get('t')]);
     }
 
-  /**
-   * @param \Illuminate\Http\Request  $request
-   * @param \App\Models\CandidateTest $candidate_test_model
-   * @param \App\Models\Test          $test_model
-   *
-   * @return $this|\Illuminate\Http\RedirectResponse
-   */
+    /**
+     * @param \Illuminate\Http\Request  $request
+     * @param \App\Models\CandidateTest $candidate_test_model
+     * @param \App\Models\Test          $test_model
+     *
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
     public function preStartTest(Request $request, CandidateTest $candidate_test_model, Test $test_model)
     {
         if (null === $this->token) {
@@ -137,7 +137,7 @@ class CandidateController extends Controller
             return view('front.candidate.pre_start_test')->with(
                 [
                     'test_total_time' => $test_total_time,
-                    'instructions' => $test_instance->instructions,
+                    'instructions'    => $test_instance->instructions,
                     'test_name'       => $test_instance->name,
                     't'               => $request->get('t'),
                 ]
@@ -204,9 +204,9 @@ class CandidateController extends Controller
 
             return view('front.candidate.test')->with(
                 [
-                    'test'            => $test_instance,
-                    'start_time'      => $start_time,
-                    'test_token'      => $test_candidate->token,
+                    'test'       => $test_instance,
+                    'start_time' => $start_time,
+                    'test_token' => $test_candidate->token,
                 ]
             );
 
@@ -304,9 +304,9 @@ class CandidateController extends Controller
             $test_candidate->save();
 
             // Send email with test finished
-          $this->sendEmailTestFinished($request->get('test_token'), $candidate_test_model);
+            $this->sendEmailTestFinished($request->get('test_token'), $candidate_test_model);
 
-            return redirect()->route('testFinished');
+            return redirect()->route('testFinished', ['t' => $request->get('test_token')]);
 
         }catch (\Exception $exception){
             return view('front.candidate.error')->with(
@@ -315,26 +315,29 @@ class CandidateController extends Controller
         }
     }
 
-    private function sendEmailTestFinished($token, CandidateTest $candidate_test_model) {
-      try{
-        $candidate = $candidate_test_model
-          ->where('token', $token)
-          ->with('candidate')
-          ->first();
+    private function sendEmailTestFinished($token, CandidateTest $candidate_test_model)
+    {
+        try{
+            $candidate = $candidate_test_model
+                ->where('token', $token)
+                ->with('candidate')
+                ->first();
 
-        \Mail::send(
-          'mail.test_finished', // view
-          [
-            // data passed to the view
-            'candidate_name' => $candidate->candidate->fullname,
-          ],
-          function ($m) use ($candidate){
-            $m->to($candidate->candidate->from)->subject('Candidate ' . $candidate->candidate->fullname . ' has finished the test');
-          }
-        );
-      }catch(\Exception $exception) {
-        // TODO log exception
-      }
+            \Mail::send(
+                'mail.test_finished', // view
+                [
+                    // data passed to the view
+                    'candidate_name' => $candidate->candidate->fullname,
+                ],
+                function ($m) use ($candidate){
+                    $m->to($candidate->candidate->from)->subject(
+                        'Candidate '.$candidate->candidate->fullname.' has finished the test'
+                    );
+                }
+            );
+        }catch (\Exception $exception){
+            // TODO log exception
+        }
     }
 
     /**
@@ -394,18 +397,42 @@ class CandidateController extends Controller
                     'status' => 'ERROR',
                 ]
             );
-            // TODO LOG ERRORS TOO FFS
         }
     }
 
     /**
+     * @param Request            $request
+     * @param CandidateTest      $candidate_test
+     * @param Test               $test
+     * @param TestDefaultMessage $test_default_message
+     *
      * @return $this
      */
-    public function testFinished()
+    public function testFinished(Request $request, CandidateTest $candidate_test, Test $test, TestDefaultMessage $test_default_message)
     {
+        $test_candidate = $candidate_test->where(
+            [
+                'token'   => $request->get('t'),
+            ]
+        )->first();
+
+        $test = $test->where('id', $test_candidate->test_id)->first();
+
+        $message = null;
+
+        if(null === $test->end_test_message) {
+            $message = $test_default_message->first();
+            if(null !== $message) {
+                $message = $message->default_message;
+            }
+        } else {
+            $message = $test->end_test_message;
+        }
+
         return view('front.candidate.error')->with(
             [
                 'error' => 'Test finished!',
+                'message' => $message,
                 'title' => 'Test done!',
             ]
         );

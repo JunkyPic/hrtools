@@ -45,6 +45,8 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/candidate/{candidate_id}/test/{test_id}/review', 'TestController@review')->name('testReview');
     Route::post('/candidate/review/submit', 'TestController@reviewSubmit')->name('reviewSubmit');
     Route::post('/candidate/review/update', 'TestController@reviewUpdate')->name('reviewUpdate');
+    Route::get('/tests/default/message', 'TestController@getSetTestsDefaultMessage')->name('getSetTestsDefaultMessage');
+    Route::post('/tests/default/message', 'TestController@postSetTestsDefaultMessage')->name('postSetTestsDefaultMessage');
 
     Route::get('/me', 'UserController@profile')->name('userProfile');
     Route::post('/me/password/change', 'UserController@changePassword')->name('changePassword');
@@ -98,6 +100,4 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/roles/user/assign', 'RolesController@assignRole')->name('assignRole');
     Route::post('/roles/user/revoke', 'RolesController@revokeRole')->name('revokeRole');
     Route::get('/roles/permissions', 'RolesController@getPermissionByRoles')->name('getPermissionByRoles');
-
-
 });

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTestsTable extends Migration
+class CreateTestDefaultCandidateMessageTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateTestsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tests', function (Blueprint $table) {
+        Schema::create('test_default_message', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('instructions');
-            $table->longText('information')->nullable();
-            $table->longText('end_test_message')->nullable();
+            $table->longText('default_message');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ class CreateTestsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tests');
+        Schema::dropIfExists('test_default_message');
     }
 }

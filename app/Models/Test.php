@@ -20,6 +20,7 @@ class Test extends Model
         'name',
         'instructions',
         'information',
+        'end_test_message',
     ];
 
     /**
