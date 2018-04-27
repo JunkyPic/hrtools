@@ -410,32 +410,51 @@ class CandidateController extends Controller
      */
     public function testFinished(Request $request, CandidateTest $candidate_test, Test $test, TestDefaultMessage $test_default_message)
     {
-        $test_candidate = $candidate_test->where(
-            [
-                'token'   => $request->get('t'),
-            ]
-        )->first();
-
-        $test = $test->where('id', $test_candidate->test_id)->first();
-
-        $message = null;
-
-        if(null === $test->end_test_message) {
-            $message = $test_default_message->first();
-            if(null !== $message) {
-                $message = $message->default_message;
+        try {
+            if(!$request->has('t')) {
+                return view('front.candidate.error')->with(
+                    [
+                        'error' => 'Test finished!',
+                        'title' => 'Test done!',
+                    ]
+                );
             }
-        } else {
-            $message = $test->end_test_message;
-        }
 
-        return view('front.candidate.error')->with(
-            [
-                'error' => 'Test finished!',
-                'message' => $message,
-                'title' => 'Test done!',
-            ]
-        );
+            $test_candidate = $candidate_test->where(
+                [
+                    'token'   => $request->get('t'),
+                ]
+            )->first();
+
+            $test = $test->where('id', $test_candidate->test_id)->first();
+
+            $message = null;
+
+            if(null === $test->end_test_message) {
+                $message = $test_default_message->first();
+                if(null !== $message) {
+                    $message = $message->default_message;
+                }
+            } else {
+                $message = $test->end_test_message;
+            }
+
+            return view('front.candidate.error')->with(
+                [
+                    'error' => 'Test finished!',
+                    'message' => $message,
+                    'title' => 'Test done!',
+                ]
+            );
+
+        } catch (\Exception $exception) {
+            return view('front.candidate.error')->with(
+                [
+                    'error' => 'Test finished!',
+                    'title' => 'Test done!',
+                ]
+            );
+        }
     }
 
     /**
