@@ -73,7 +73,7 @@
                             <p>Question was not answered</p>
                         @endif
                     </div>
-                    <div class="col-lg-6 offset-3">
+                    <div class="col-lg-8 offset-3">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="is_correct[{{$answer->id}}]"
                                    id="CORRECT_{{$answer->id}}" value="{{ \App\Models\Review::CORRECT }}">
