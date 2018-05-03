@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
+use App\Models\CandidateInviteInform;
 use App\Models\CandidateTest;
 use App\Models\Question;
 use App\Models\Test;
@@ -150,12 +151,12 @@ class CandidateController extends Controller
         }
     }
 
-    /**
-     * @param CandidateTest $candidate_test_model
-     * @param Test          $test_model
-     *
-     * @return $this|\Illuminate\Http\RedirectResponse
-     */
+  /**
+   * @param \App\Models\CandidateTest $candidate_test_model
+   * @param \App\Models\Test          $test_model
+   *
+   * @return $this|\Illuminate\Http\RedirectResponse
+   */
     public function postStarTest(CandidateTest $candidate_test_model, Test $test_model)
     {
         if ( ! isset($_COOKIE['jsen'])) {
@@ -217,23 +218,25 @@ class CandidateController extends Controller
         }
     }
 
-    /**
-     * @param Request         $request
-     * @param CandidateTest   $candidate_test_model
-     * @param Question        $question_model
-     * @param Test            $test_model
-     * @param ImageRepository $image_repository
-     * @param Answer          $answer_model
-     *
-     * @return $this|\Illuminate\Http\RedirectResponse
-     */
+  /**
+   * @param \Illuminate\Http\Request          $request
+   * @param \App\Models\CandidateTest         $candidate_test_model
+   * @param \App\Models\Question              $question_model
+   * @param \App\Models\Test                  $test_model
+   * @param \App\Repository\ImageRepository   $image_repository
+   * @param \App\Models\Answer                $answer_model
+   * @param \App\Models\CandidateInviteInform $candidate_invite_inform
+   *
+   * @return $this|\Illuminate\Http\RedirectResponse
+   */
     public function postEndTest(
         Request $request,
         CandidateTest $candidate_test_model,
         Question $question_model,
         Test $test_model,
         ImageRepository $image_repository,
-        Answer $answer_model
+        Answer $answer_model,
+        CandidateInviteInform $candidate_invite_inform
     ){
         try{
             $test_id = $request->get('test_id');
@@ -303,8 +306,21 @@ class CandidateController extends Controller
             $test_candidate->is_valid = false;
             $test_candidate->save();
 
+            $emails = $candidate_invite_inform->where('candidate_test_id', $test_id)->get();
+
+            if(null !== $emails) {
+              $candidate = $candidate_test_model
+                ->where('token', $request->get('test_token'))
+                ->with('candidate')
+                ->first();
+
+              foreach($emails as $email) {
+                $this->informTestFinished($email->email, $candidate);
+              }
+            }
+
             // Send email with test finished
-          $this->sendEmailTestFinished($request->get('test_token'), $candidate_test_model);
+            $this->sendEmailTestFinished($request->get('test_token'), $candidate_test_model);
 
             return redirect()->route('testFinished');
 
@@ -313,6 +329,23 @@ class CandidateController extends Controller
                 ['error' => 'Something went wrong, contact a system administrator.']
             );
         }
+    }
+
+    private function informTestFinished($email, $candidate) {
+      try{
+        \Mail::send(
+          'mail.test_finished', // view
+          [
+            // data passed to the view
+            'candidate_name' => $candidate->candidate->fullname,
+          ],
+          function ($m) use ($candidate, $email){
+            $m->to($email)->subject('Candidate ' . $candidate->candidate->fullname . ' has finished the test');
+          }
+        );
+      }catch(\Exception $exception) {
+        // TODO log exception
+      }
     }
 
     private function sendEmailTestFinished($token, CandidateTest $candidate_test_model) {

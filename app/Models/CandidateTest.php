@@ -35,6 +35,10 @@ class CandidateTest extends Model
         return $this->hasMany(Answer::class, 'candidate_test_id');
     }
 
+    public function informs() {
+        return $this->hasMany(CandidateInviteInform::class, 'candidate_test_id');
+    }
+
     public function candidate() {
         return $this->belongsto(Candidate::class, 'candidate_id');
     }

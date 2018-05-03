@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CandidateInviteControllerPostCreateInvite;
 use App\Models\Candidate;
+use App\Models\CandidateInviteInform;
 use App\Models\CandidateTest;
 use App\Models\Test;
 use App\User;
@@ -35,17 +36,22 @@ class CandidateInviteController extends Controller
         );
     }
 
-    /**
-     * @param CandidateInviteControllerPostCreateInvite $request
-     * @param Candidate                                 $candidate_model
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function postCreateInvite(CandidateInviteControllerPostCreateInvite $request, Candidate $candidate_model)
+  /**
+   * @param \App\Http\Requests\CandidateInviteControllerPostCreateInvite $request
+   * @param \App\Models\Candidate                                        $candidate_model
+   * @param \App\Models\CandidateInviteInform                            $candidate_invite_inform
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
+    public function postCreateInvite(CandidateInviteControllerPostCreateInvite $request, Candidate $candidate_model, CandidateInviteInform $candidate_invite_inform)
     {
             $test_token = Str::random(100);
             $email = $request->get('to');
             $fullname = $request->get('fullname');
+
+            if($request->has('emails')) {
+              $inform = explode(',', $request->get('emails'));
+            }
 
             // check if that email is already registered to a candidate
             $candidate = $candidate_model->where('to', $email)->first();
@@ -73,7 +79,7 @@ class CandidateInviteController extends Controller
             }
 
             // Create a new instance of the newly updated candidate test
-            $candidate->candidateTest()->create(
+            $test = $candidate->candidateTest()->create(
                 [
                     'token'        => $test_token,
                     'is_valid'     => true,
@@ -84,6 +90,17 @@ class CandidateInviteController extends Controller
                     'candidate_id' => $candidate->id,
                 ]
             );
+
+            if(isset($inform) && !empty($inform)) {
+              foreach($inform as $email) {
+                $candidate_invite_inform->create(
+                  [
+                    'email'             => $email,
+                    'candidate_test_id' => $test->id,
+                  ]
+                );
+              }
+            }
 
         Mail::send(
             'mail.issue', // view

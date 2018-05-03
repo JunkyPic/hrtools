@@ -130,6 +130,27 @@
                             @endif
                         </div>
                     </div>
+
+
+                    <div class="form-group row">
+                        <label for="emails" class="col-sm-2 col-form-label text-md-right">{{ __('When test fished send an email to') }}</label>
+
+                        <div class="col-md-10">
+                            <input id="emails" type="text"
+                                   class="form-control{{ $errors->has('emails') ? ' is-invalid' : '' }}" name="emails" autofocus>
+                            @if ($errors->has('emails'))
+                                <span class="invalid-feedback">
+                                <strong>{{ $errors->first('emails') }}</strong>
+                            </span>
+                            @endif
+                            <small class="text-muted">Sends an email informing others that the candidate has finished the test. The person who issued this invite is automatically included.
+                                Include as many email addresses as you wish separated by a comma(,). <span class="text-warning">Ex: admin@optaros.com,john@doe.com, jane@doe.com.
+                                    Any email not separated by a comma will be ignored.</span>
+                            </small>
+                        </div>
+
+                    </div>
+
                     <div class="form-group row mb-0 spacing-top-10">
                         <div class="col-md-10 offset-md-2">
                             <button type="button" class="btn btn-primary btn-lg btn-block waves-effect waves-light" data-toggle="modal" data-target="#submitModal">
