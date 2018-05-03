@@ -75,10 +75,10 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/tag/manage', 'QuestionController@manageTag')->name('manageTag');
 
     // Chapters
-    Route::get('/chapter/add', 'Chaptercontroller@getCreate')->name('chapterGetCreate');
-    Route::post('/chapter/add', 'Chaptercontroller@postCreate')->name('chapterPostCreate');
-    Route::get('/chapters', 'Chaptercontroller@all')->name('chapterAll');
-    Route::get('/chapter/{id}/edit', 'Chaptercontroller@getEdit')->name('chapterGetEdit');
+    Route::get('/chapter/add', 'ChapterController@getCreate')->name('chapterGetCreate');
+    Route::post('/chapter/add', 'ChapterController@postCreate')->name('chapterPostCreate');
+    Route::get('/chapters', 'ChapterController@all')->name('chapterAll');
+    Route::get('/chapter/{id}/edit', 'ChapterController@getEdit')->name('chapterGetEdit');
     Route::post('/chapter/{id}/edit', 'ChapterController@postEdit')->name('chapterPostEdit');
     Route::post('/chapter/{id}/delete', 'ChapterController@delete')->name('chapterDelete');
     Route::post('/chapter/test/associate', 'ChapterController@chapterTestAssociate')->name('chapterTestAssociate');
