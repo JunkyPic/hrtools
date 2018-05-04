@@ -41,7 +41,7 @@
                     <div class="col-md-10">
                         <input id="subject" type="text"
                                class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="subject"
-                               value="{{ $user->username }}, from Optaros" required autofocus>
+                               value="{{ $user->username }}, from HR Tools" required autofocus>
                         @if ($errors->has('subject'))
                             <span class="invalid-feedback">
                                 <strong>{{ $errors->first('subject') }}</strong>
