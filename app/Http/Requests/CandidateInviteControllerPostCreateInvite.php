@@ -26,6 +26,7 @@ class CandidateInviteControllerPostCreateInvite extends FormRequest
     {
         return [
             'to' => 'required|string|email',
+            'phone' => 'required',
             'fullname' => 'required|string',
             'subject' => 'required|string',
             'message' => 'required|string',
@@ -40,6 +41,7 @@ class CandidateInviteControllerPostCreateInvite extends FormRequest
     public function messages() {
         return [
             'to.required' => 'The "to" field is required',
+            'phone.required' => 'The phone field is required',
             'to.email' => 'The email is invalid',
             'subject.required' => 'The subject field is required',
             'message.required' => 'The body field is required',

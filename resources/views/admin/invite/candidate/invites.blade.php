@@ -18,6 +18,7 @@
             <tr>
                 <th scope="col">To email</th>
                 <th scope="col">Full name</th>
+                <th scope="col">Phone number</th>
                 <th scope="col">From</th>
                 <th scope="col">Status</th>
                 <th scope="col">Actions/Status</th>
@@ -30,6 +31,7 @@
                     <tr class="table-light">
                         <th scope="row">{{$invite->to}}</th>
                         <td>{{$invite->fullname}}</td>
+                        <td>{{$test->phone}}</td>
                         <td>{{$invite->from}}</td>
                         <td>
                             @if(NULL !== $test->started_at && NULL === $test->finished_at)

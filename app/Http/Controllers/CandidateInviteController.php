@@ -82,6 +82,7 @@ class CandidateInviteController extends Controller
             $test = $candidate->candidateTest()->create(
                 [
                     'token'        => $test_token,
+                    'phone'        => $request->get('phone'),
                     'is_valid'     => true,
                     'validity'     => $request->get('test_validity'),
                     'started_at'   => null,

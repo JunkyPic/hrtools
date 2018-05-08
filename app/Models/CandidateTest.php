@@ -21,6 +21,7 @@ class CandidateTest extends Model
         'is_valid',
         'validity',
         'started_at',
+        'phone',
         'finished_at',
         'candidate_id',
         'test_id',
