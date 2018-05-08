@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TestControllerPostCreateDefaultTestMessage;
 use App\Http\Requests\TestControllerPostCreateTest;
 use App\Http\Requests\TestControllerPostEditTest;
 use App\Http\Requests\TestControllerPostSubmitReview;
@@ -11,6 +12,7 @@ use App\Models\Candidate;
 use App\Models\CandidateTest;
 use App\Models\Review;
 use App\Models\Test;
+use App\Models\TestDefaultMessage;
 use Illuminate\Auth\Access\AuthorizationException;
 
 /**
@@ -34,10 +36,12 @@ class TestController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postCreate(TestControllerPostCreateTest $request, Test $test_model) {
+
         $test_model->create([
             'name' => $request->get('name'),
             'instructions' => $request->get('instructions'),
-            'information' => $request->has('information') ? $request->get('information') : null,
+            'information' => $request->get('information'),
+            'end_test_message' => $request->get('end_test_message'),
         ]);
 
         return redirect()->back()->with(['message' => 'Test created successfully', 'alert_type' => 'success']);
@@ -242,5 +246,38 @@ class TestController extends Controller
         }
 
         return redirect()->back()->with(['message' => 'Review submitted successfully', 'alert_type' => 'success']);
+    }
+
+    /**
+     * @param TestDefaultMessage $message_model
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getSetTestsDefaultMessage(TestDefaultMessage $message_model) {
+        return view('admin.test.default_message.create')->with(['default_message' => $message_model->first()]);
+    }
+
+    /**
+     * @param TestControllerPostCreateDefaultTestMessage $request
+     * @param TestDefaultMessage                         $message_model
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postSetTestsDefaultMessage(TestControllerPostCreateDefaultTestMessage $request, TestDefaultMessage $message_model) {
+        $default_message = $request->get('default_message');
+
+        $message_model_instance = $message_model->first();
+
+        if(null === $message_model_instance) {
+            $message_model->create($request->except('_token'));
+            return redirect()->back()->with(['message' => 'Default message saved successfully', 'alert_type' => 'success']);
+        }
+
+        $message_model_instance->default_message = $default_message;
+        if($message_model_instance->save()) {
+            return redirect()->back()->with(['message' => 'Default message saved successfully', 'alert_type' => 'success']);
+        }
+
+        return redirect()->back()->with(['message' => 'Unable to save default message', 'alert_type' => 'danger']);
     }
 }

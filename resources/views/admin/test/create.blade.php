@@ -62,6 +62,27 @@
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <label for="end_test_message" class="col-md-2 col-form-label text-md-right">{{ __('Test end message') }}</label>
+
+                    <div class="col-md-10">
+                        <textarea id="end_test_message" rows="10"
+                                  class="form-control{{ $errors->has('end_test_message') ? ' is-invalid' : '' }}" name="end_test_message"></textarea>
+                        @if ($errors->has('end_test_message'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('end_test_message') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-10 offset-md-2">
+                        <small>This message will appear once a candidate has finished a test. If no message is set, the default one will be used.
+                            The default message can be set <a href="{{ route('getSetTestsDefaultMessage') }}" target="_blank">here</a>.
+                        </small>
+                    </div>
+                </div>
+
                 <div class="form-group row mb-0">
                     <div class="col-md-10 offset-md-2">
                         <button type="submit" class="btn btn-primary btn-lg btn-block">

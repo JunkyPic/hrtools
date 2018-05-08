@@ -73,7 +73,7 @@
                             <p>Question was not answered</p>
                         @endif
                     </div>
-                    <div class="text-center">
+                    <div class="col-lg-8 offset-3">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="is_correct[{{$answer->id}}]"
                                    id="CORRECT_{{$answer->id}}" value="{{ \App\Models\Review::CORRECT }}">
@@ -100,7 +100,7 @@
                     <div class="col-lg-12 spacing-top-30 text-center">
                         <hr>
                         <label for="note{{$answer->id}}"><strong>Notes</strong></label>
-                        <textarea name="notes[{{ $answer->id }}]" class="form-control" style="min-width: 100%" rows="5"
+                        <textarea name="notes[{{ $answer->id }}]" class="form-control margin-bottom-20" style="min-width: 100%" rows="5"
                                   id="note{{$answer->id}}"></textarea>
                     </div>
                 </div>

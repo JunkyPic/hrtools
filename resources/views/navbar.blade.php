@@ -28,6 +28,8 @@
                         <a class="dropdown-item" href="{{ route('testGetCreate') }}">Add</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('testTaken') }}">Test results</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ route('getSetTestsDefaultMessage') }}">Default message</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">

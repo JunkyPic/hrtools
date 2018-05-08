@@ -81,6 +81,7 @@ class IssueInviteController extends Controller
                 'link' => route('getRegister', ['token' => $token]),
             ],
             function ($m) use ($request){
+                $m->from(\Auth::user()->email, 'HR Tools');
                 $m->to($request->get('to'))->subject($request->get('subject'));
             }
         );

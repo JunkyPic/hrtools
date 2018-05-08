@@ -45,6 +45,8 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::get('/candidate/{candidate_id}/test/{test_id}/review', 'TestController@review')->name('testReview');
     Route::post('/candidate/review/submit', 'TestController@reviewSubmit')->name('reviewSubmit');
     Route::post('/candidate/review/update', 'TestController@reviewUpdate')->name('reviewUpdate');
+    Route::get('/tests/default/message', 'TestController@getSetTestsDefaultMessage')->name('getSetTestsDefaultMessage');
+    Route::post('/tests/default/message', 'TestController@postSetTestsDefaultMessage')->name('postSetTestsDefaultMessage');
 
     Route::get('/me', 'UserController@profile')->name('userProfile');
     Route::post('/me/password/change', 'UserController@changePassword')->name('changePassword');
@@ -73,10 +75,10 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/tag/manage', 'QuestionController@manageTag')->name('manageTag');
 
     // Chapters
-    Route::get('/chapter/add', 'Chaptercontroller@getCreate')->name('chapterGetCreate');
-    Route::post('/chapter/add', 'Chaptercontroller@postCreate')->name('chapterPostCreate');
-    Route::get('/chapters', 'Chaptercontroller@all')->name('chapterAll');
-    Route::get('/chapter/{id}/edit', 'Chaptercontroller@getEdit')->name('chapterGetEdit');
+    Route::get('/chapter/add', 'ChapterController@getCreate')->name('chapterGetCreate');
+    Route::post('/chapter/add', 'ChapterController@postCreate')->name('chapterPostCreate');
+    Route::get('/chapters', 'ChapterController@all')->name('chapterAll');
+    Route::get('/chapter/{id}/edit', 'ChapterController@getEdit')->name('chapterGetEdit');
     Route::post('/chapter/{id}/edit', 'ChapterController@postEdit')->name('chapterPostEdit');
     Route::post('/chapter/{id}/delete', 'ChapterController@delete')->name('chapterDelete');
     Route::post('/chapter/test/associate', 'ChapterController@chapterTestAssociate')->name('chapterTestAssociate');
@@ -98,6 +100,4 @@ Route::middleware(['redirect_if_not_authenticated'])->group(function () {
     Route::post('/roles/user/assign', 'RolesController@assignRole')->name('assignRole');
     Route::post('/roles/user/revoke', 'RolesController@revokeRole')->name('revokeRole');
     Route::get('/roles/permissions', 'RolesController@getPermissionByRoles')->name('getPermissionByRoles');
-
-
 });
